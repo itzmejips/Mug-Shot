@@ -4,7 +4,8 @@ import { Delete, Edit, Add, Search, CloudUpload, LocalCafe, Close } from '@mui/i
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const API_URL = rawApiUrl.replace(/\/$/, "");
 
 const MenuManager = () => {
   const [items, setItems] = useState([]);
