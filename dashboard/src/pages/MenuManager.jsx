@@ -51,7 +51,13 @@ const MenuManager = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'price') {
+      if (parseFloat(value) < 0) {
+        value = '0';
+      }
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleFileChange = (e) => {
@@ -282,6 +288,7 @@ const MenuManager = () => {
                   value={formData.price}
                   onChange={handleChange}
                   required
+                  inputProps={{ min: 0 }}
                   InputProps={{ startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment> }}
                 />
               </Grid>
