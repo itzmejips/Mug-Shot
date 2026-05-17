@@ -142,7 +142,7 @@ const MenuPage = () => {
                           {item.photoUrl ? (
                             <CardMedia
                               component="img"
-                              image={`${API_URL}${item.photoUrl}`}
+                              image={/^(https?:)?\/\//i.test(item.photoUrl) ? item.photoUrl : `${API_URL}${item.photoUrl}`}
                               alt={item.name}
                               sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
                             />

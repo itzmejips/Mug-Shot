@@ -169,7 +169,7 @@ const MenuManager = () => {
                   {item.photoUrl ? (
                     <Box
                       component="img"
-                      src={`${API_URL}${item.photoUrl}`}
+                      src={/^(https?:)?\/\//i.test(item.photoUrl) ? item.photoUrl : `${API_URL}${item.photoUrl}`}
                       sx={{ width: 56, height: 56, borderRadius: 2, objectFit: 'cover', border: '1px solid rgba(211, 47, 47, 0.12)' }}
                     />
                   ) : (
