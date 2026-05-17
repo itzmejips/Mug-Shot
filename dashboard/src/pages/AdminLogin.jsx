@@ -52,11 +52,11 @@ function AdminLogin() {
     setLoading(true);
 
     const formData = new FormData(event.currentTarget);
-    const username = formData.get("username")?.toString().trim();
+    const email = formData.get("email")?.toString().trim();
     const password = formData.get("password")?.toString();
 
-    if (!username || !password) {
-      setError("Please enter both username and password.");
+    if (!email || !password) {
+      setError("Please enter both email and password.");
       setLoading(false);
       return;
     }
@@ -67,13 +67,13 @@ function AdminLogin() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "The username or password you entered is incorrect.");
+        setError(data.message || "The email or password you entered is incorrect.");
         setLoading(false);
         return;
       }
@@ -128,10 +128,10 @@ function AdminLogin() {
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
                 autoFocus
               />
               <TextField
@@ -168,12 +168,6 @@ function AdminLogin() {
               >
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
-
-              <Box sx={{ mt: 2, textAlign: "right" }}>
-                <Link href="#" variant="body2" sx={{ textDecoration: "none" }}>
-                  Forgot Password?
-                </Link>
-              </Box>
             </Box>
           </Box>
 

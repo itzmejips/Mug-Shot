@@ -18,9 +18,7 @@ const UserManager = () => {
 
   const fetchUsers = async () => {
     try {
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-      const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-      const { data } = await axios.get(`${API_URL}/api/users`, config);
+      const { data } = await axios.get(`${API_URL}/api/users`);
       setUsers(data);
     } catch (err) {
       console.error('Error fetching users', err);
@@ -53,22 +51,16 @@ const UserManager = () => {
 
   const handleSubmit = async () => {
     try {
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-      const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-      
-      const payload = {
-        ...formData,
-        username: formData.email // Set username equal to email behind the scenes
-      };
-      
+      const payload = { ...formData };
+
       if (editingId) {
         // Update user
-        await axios.put(`${API_URL}/api/users/${editingId}`, payload, config);
+        await axios.put(`${API_URL}/api/users/${editingId}`, payload);
       } else {
         // Create user
-        await axios.post(`${API_URL}/api/users`, payload, config);
+        await axios.post(`${API_URL}/api/users`, payload);
       }
-      
+
       fetchUsers();
       handleClose();
     } catch (err) {
@@ -77,15 +69,20 @@ const UserManager = () => {
   };
 
   const handleDeleteUser = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      try {
-        const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-        const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-        await axios.delete(`${API_URL}/api/users/${id}`, config);
-        fetchUsers();
-      } catch (err) {
-        console.error('Error deleting user', err);
-      }
+    const confirmDelete = window.confirm("Are you sure you want to delete this administrator?");
+
+    if (!confirmDelete) {
+      alert("Delete Cancelled!");
+      return;
+    }
+
+    try {
+      await axios.delete(`${API_URL}/api/users/${id}`);
+      alert("Deleted successfully!");
+      fetchUsers();
+    } catch (err) {
+      console.error('Error deleting user', err);
+      alert("Delete failed!");
     }
   };
 
@@ -107,27 +104,27 @@ const UserManager = () => {
               <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Password</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
-            
+
             {/* User Data rows */}
             {users.map((user, index) => (
               <TableRow key={user._id || index}>
                 <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem", pl: 0 }}>
-                  {user.name || user.username}
+                  {user.name}
                 </TableCell>
                 <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
-                  {user.email || `${(user.username || '').toLowerCase()}@mugshot.com`}
+                  {user.email}
                 </TableCell>
                 <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
-                  {user.password || '••••••••'}
+                  {user.password}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3 }} align="right">
-                  <Button 
-                    variant="outlined" 
-                    color="primary" 
+                  <Button
+                    variant="outlined"
+                    color="primary"
                     onClick={() => handleEdit(user, index)}
-                    sx={{ 
-                      color: "#42a5f5", 
-                      borderColor: "#42a5f5", 
+                    sx={{
+                      color: "#42a5f5",
+                      borderColor: "#42a5f5",
                       fontWeight: 700,
                       px: 3,
                       borderRadius: 1.5,
@@ -140,12 +137,12 @@ const UserManager = () => {
                   >
                     EDIT
                   </Button>
-                  <Button 
-                    variant="outlined" 
-                    color="error" 
-                    sx={{ 
-                      marginLeft: "10px", 
-                      color: "#ff5252", 
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      marginLeft: "10px",
+                      color: "#ff5252",
                       borderColor: "#ff5252",
                       fontWeight: 700,
                       px: 3,
@@ -156,7 +153,11 @@ const UserManager = () => {
                         bgcolor: "transparent"
                       }
                     }}
-                    onClick={() => handleDeleteUser(user._id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDeleteUser(user._id);
+                    }}
                   >
                     DELETE
                   </Button>
@@ -169,31 +170,31 @@ const UserManager = () => {
 
       {/* Button to Create Admin - simple and bottom-aligned or cleanly styled */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<Add />} 
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
           onClick={handleOpen}
           sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
         >
-          Create Admin Account
+          Add User
         </Button>
       </Box>
 
       {/* Dialog for Create/Edit */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose} 
-        maxWidth="xs" 
-        fullWidth 
-        PaperProps={{ 
-          sx: { 
-            borderRadius: 4, 
-            p: 1, 
-            backgroundImage: 'none', 
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            p: 1,
+            backgroundImage: 'none',
             bgcolor: 'background.paper',
             border: '1px solid rgba(211, 47, 47, 0.12)'
-          } 
+          }
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 0 }}>
@@ -208,56 +209,56 @@ const UserManager = () => {
               <AdminPanelSettings fontSize="large" />
             </Avatar>
             <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-              {editingId ? 'Update the administrator account credentials.' : 'Configure credentials for the new administrator.'}
+              {editingId ? 'Update User Account .' : 'Add User Account'}
             </Typography>
           </Box>
-          
+
           {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '0.85rem' }}>{error}</Typography>}
-          
+
           <Stack spacing={3}>
-            <TextField 
-              fullWidth 
-              label="Name" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              required 
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
               variant="outlined"
               placeholder="e.g. John Paul Dres"
             />
-            <TextField 
-              fullWidth 
-              label="Email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
               variant="outlined"
               placeholder="e.g. johnpaul00504@gmail.com"
             />
-            <TextField 
-              fullWidth 
-              label="Password" 
-              name="password" 
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
               type="text" // Shown in plain text as requested in screenshot edit/displays
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
+              value={formData.password}
+              onChange={handleChange}
+              required
               variant="outlined"
               placeholder="e.g. jp1234"
             />
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 4, pt: 2, flexDirection: 'column', gap: 2 }}>
-          <Button 
+          <Button
             fullWidth
-            onClick={handleSubmit} 
-            variant="contained" 
-            color="primary" 
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
             disabled={!formData.name || !formData.email || !formData.password}
             sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '1rem' }}
           >
-            {editingId ? 'Save Changes' : 'Authorize Administrator'}
+            {editingId ? 'Save Changes' : 'Add User'}
           </Button>
           <Button fullWidth onClick={handleClose} sx={{ fontWeight: 700, color: 'text.secondary' }}>
             Cancel

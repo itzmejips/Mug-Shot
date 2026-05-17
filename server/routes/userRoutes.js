@@ -1,78 +1,95 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const { protect } = require('../middleware/authMiddleware');
-const bcrypt = require('bcryptjs');
 
 // @route   GET /api/users
 // @desc    Get all admin users
-// @access  Private
-router.get('/', protect, async (req, res) => {
+// @access  Public (simplified without JWT)
+router.get('/', async (req, res) => {
     try {
         const users = await User.find({});
         res.json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Get Users Error:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 });
 
 // @route   POST /api/users
 // @desc    Create an admin user
-// @access  Private
-router.post('/', protect, async (req, res) => {
-    const { username, password, name, email } = req.body;
+// @access  Public (simplified without JWT)
+router.post('/', async (req, res) => {
+    const { name, email, password } = req.body;
+    
     try {
-        const userExists = await User.findOne({ username });
+        if (!email || !name || !password) {
+            return res.status(400).json({ message: 'Name, email, and password are required' });
+        }
+
+        const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
         
         // Based on studied code: new User() and save()
-        const newUser = new User({ username, password, name, email });
+        const newUser = new User({ name, email, password });
         await newUser.save();
 
         res.status(201).json({
             _id: newUser._id,
-            username: newUser.username,
             name: newUser.name,
-            email: newUser.email
+            email: newUser.email,
+            password: newUser.password
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Create User Error:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 });
 
 // @route   DELETE /api/users/:id
 // @desc    Delete an admin user
-// @access  Private
-router.delete('/:id', protect, async (req, res) => {
+// @access  Public (simplified without JWT)
+router.delete('/:id', async (req, res) => {
     try {
+        const { id } = req.params;
+        if (!id || id === 'undefined') {
+            return res.status(400).json({ message: 'User ID is required and must be valid' });
+        }
+
         // Based on studied code: findByIdAndDelete()
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        const deletedUser = await User.findByIdAndDelete(id);
         if (deletedUser) {
             res.json({ message: 'User removed', user: deletedUser });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Delete User Error:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 });
 
 // @route   PUT /api/users/:id
 // @desc    Update a user
-// @access  Private
-router.put('/:id', protect, async (req, res) => {
-    const { username, password, name, email } = req.body;
+// @access  Public (simplified without JWT)
+router.put('/:id', async (req, res) => {
+    const { name, email, password } = req.body;
+    
     try {
-        const updateFields = { username, name, email };
+        const { id } = req.params;
+        if (!id || id === 'undefined') {
+            return res.status(400).json({ message: 'User ID is required and must be valid' });
+        }
+
+        const updateFields = { name, email };
         if (password) {
             updateFields.password = password;
         }
 
         // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
         const updatedUser = await User.findByIdAndUpdate(
-            req.params.id, 
+            id, 
             updateFields, 
             { returnDocument: 'after' }
         );
@@ -80,15 +97,16 @@ router.put('/:id', protect, async (req, res) => {
         if (updatedUser) {
             res.json({
                 _id: updatedUser._id,
-                username: updatedUser.username,
                 name: updatedUser.name,
-                email: updatedUser.email
+                email: updatedUser.email,
+                password: updatedUser.password
             });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Update User Error:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 });
 

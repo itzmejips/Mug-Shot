@@ -125,7 +125,7 @@ const AdminLayout = () => {
             Mug Shot Admin
           </Typography>
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem' }}>
-            {adminInfo.username?.charAt(0).toUpperCase() || 'A'}
+            {adminInfo.name?.charAt(0).toUpperCase() || adminInfo.email?.charAt(0).toUpperCase() || 'A'}
           </Avatar>
         </Toolbar>
       </AppBar>

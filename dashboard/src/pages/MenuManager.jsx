@@ -58,10 +58,8 @@ const MenuManager = () => {
   };
 
   const handleSubmit = async () => {
-    const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
     const config = {
       headers: {
-        'Authorization': `Bearer ${adminInfo.token}`,
         'Content-Type': 'multipart/form-data'
       }
     };
@@ -89,15 +87,20 @@ const MenuManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm('Are you sure you want to delete this item?')) {
-        const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
-        const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-        try {
-            await axios.delete(`${API_URL}/api/menu/${id}`, config);
-            fetchItems();
-        } catch (error) {
-            console.error('Error deleting item', error);
-        }
+    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+
+    if (!confirmDelete) {
+      alert("Delete Cancelled!");
+      return;
+    }
+
+    try {
+        await axios.delete(`${API_URL}/api/menu/${id}`);
+        alert("Deleted successfully!");
+        fetchItems();
+    } catch (error) {
+        console.error('Error deleting item', error);
+        alert("Delete failed!");
     }
   };
 
@@ -216,7 +219,11 @@ const MenuManager = () => {
                         bgcolor: "transparent"
                       }
                     }}
-                    onClick={() => handleDelete(item._id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDelete(item._id);
+                    }}
                   >
                     DELETE
                   </Button>

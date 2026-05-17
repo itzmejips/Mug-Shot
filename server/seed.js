@@ -83,9 +83,13 @@ const importData = async () => {
     await User.deleteMany();
 
     await MenuItem.insertMany(menuData);
-    
+
     // Create default admin
-    await User.create({ username: 'admin', password: 'password123' });
+    await User.create({
+      password: 'admin123',
+      email: 'admin@mugshot.cafe',
+      name: 'admin'
+    });
 
     console.log('Data Imported!');
     process.exit();
