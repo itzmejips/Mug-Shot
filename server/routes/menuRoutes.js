@@ -11,6 +11,25 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+const os = require('os');
+const path = require('path');
+const cloudConfigured = Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+);
+
+// Temp uploads directory (matching index.js)
+const tmpUploadsDir = path.join(os.tmpdir(), 'mugshot_uploads');
+const ensureTmpUploadsDir = () => {
+    const fs = require('fs');
+    try {
+        if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
+    } catch (err) {
+        console.warn('Could not create tmp uploads dir in route:', err.message);
+    }
+};
+
 // @route   GET /api/menu
 // @desc    Get all menu items
 // @access  Public
@@ -33,10 +52,20 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
         let photoUrl = '';
         if (req.file && req.file.buffer) {
-            // Upload buffer to Cloudinary using data URI
-            const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-            const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
-            photoUrl = uploadRes.secure_url;
+            if (!cloudConfigured) {
+                console.warn('Cloudinary not configured — received file; saving to tmp uploads.');
+                ensureTmpUploadsDir();
+                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+                const filePath = path.join(tmpUploadsDir, filename);
+                require('fs').writeFileSync(filePath, req.file.buffer);
+                // Expose via /uploads route
+                photoUrl = `/uploads/${filename}`;
+            } else {
+                // Upload buffer to Cloudinary using data URI
+                const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+                const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
+                photoUrl = uploadRes.secure_url;
+            }
         }
 
         const menuItem = new MenuItem({ name, description, price, category, photoUrl });
@@ -72,9 +101,18 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
         };
 
         if (req.file && req.file.buffer) {
-            const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-            const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
-            updateFields.photoUrl = uploadRes.secure_url;
+            if (!cloudConfigured) {
+                console.warn('Cloudinary not configured — received file on update; saving to tmp uploads.');
+                ensureTmpUploadsDir();
+                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+                const filePath = path.join(tmpUploadsDir, filename);
+                require('fs').writeFileSync(filePath, req.file.buffer);
+                updateFields.photoUrl = `/uploads/${filename}`;
+            } else {
+                const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+                const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
+                updateFields.photoUrl = uploadRes.secure_url;
+            }
         }
 
         const updatedItem = await MenuItem.findByIdAndUpdate(id, updateFields, { returnDocument: 'after' });

@@ -11,6 +11,18 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+const fs = require('fs');
+const os = require('os');
+
+// Create and serve a temp uploads directory (useful for serverless runtimes fallback)
+const tmpUploadsDir = path.join(os.tmpdir(), 'mugshot_uploads');
+try {
+    if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
+} catch (err) {
+    console.warn('Could not create tmp uploads dir:', err.message);
+}
+app.use('/uploads', express.static(tmpUploadsDir));
+// Also serve repository uploads if present (local dev)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Routes
