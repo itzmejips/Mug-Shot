@@ -18,12 +18,14 @@ const MenuManager = () => {
   const categories = ['Rice Meals', 'Pasta and Appetizers', 'Waffle and Sweets', 'Signature Coffee', 'Coffee Lattes', 'Specialty Refreshments'];
 
   useEffect(() => {
-    const adminInfo = localStorage.getItem('adminInfo');
-    if (!adminInfo) {
+    const adminInfoRaw = localStorage.getItem('adminInfo');
+    const adminInfo = adminInfoRaw ? JSON.parse(adminInfoRaw) : null;
+    if (!adminInfo || !adminInfo.token) {
+      // Ensure a fresh login so the token is available for protected actions
       navigate('/login');
-    } else {
-      fetchItems();
+      return;
     }
+    fetchItems();
   }, [navigate]);
 
   const fetchItems = async () => {
