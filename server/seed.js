@@ -72,9 +72,6 @@ const menuData = [
   { name: 'Citron Hibiscus', description: 'Hibiscus tea + Lemon soda + sweetener + citron jam', price: 120, category: 'Specialty Refreshments' },
   { name: 'Monolithic Sunset', description: 'Combination of the 2 tea into one + passion fruit jam + lemon soda', price: 130, category: 'Specialty Refreshments' },
   { name: 'Soda Yakult', description: 'Green apple, peach, blueberry, strawberry, blueberry peach, peach lychee, lychee', price: 120, category: 'Specialty Refreshments' },
-  { name: 'Espresso', description: '', price: 70, category: 'Specialty Refreshments' },
-  { name: 'Syrup', description: '', price: 40, category: 'Specialty Refreshments' },
-  { name: 'Sub Oat', description: '', price: 50, category: 'Specialty Refreshments' }
 ];
 
 const importData = async () => {
