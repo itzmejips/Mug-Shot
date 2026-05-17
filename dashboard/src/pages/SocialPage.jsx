@@ -36,7 +36,7 @@ const SocialPage = () => {
               transition={{ duration: 0.8 }}
             >
               <Typography variant="overline" sx={{ color: '#D32F2F', fontWeight: 900, letterSpacing: 4, display: 'block' }}>
-                THE DIGITAL PULSE
+                SOCIAL
               </Typography>
               <Typography variant="h2" sx={{ mb: 4, mt: 2, fontSize: { xs: '2.5rem', md: '4rem' } }}>
                 Social Gallery

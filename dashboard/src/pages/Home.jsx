@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container, Button, Stack, Grid, Card, Chip, IconButton } from '@mui/material';
-import { LocalCafe, ArrowForward, Star, Favorite, Instagram, Facebook, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+import { Box, Typography, Container, Button, Stack, IconButton } from '@mui/material';
+import { ArrowForward, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -8,7 +8,9 @@ import Footer from '../components/Footer';
 
 // Local Asset Imports
 import mugshotImg from '../assets/MugShot.jpeg';
-import menuImg from '../assets/Menu.jpg';
+import menuImg from '../assets/Menu.jpeg';
+import aboutus from '../assets/AboutUs.png';
+import visitus from '../assets/about.jpeg';
 
 const MotionBox = motion(Box);
 
@@ -16,28 +18,29 @@ const carouselSlides = [
   {
     title: "Mug Shot",
     subtitle: "Bringing stories into life with every sip",
-    image: mugshotImg,
+    image: mugshotImg
+    ,
     cta: "Explore Cafe",
     link: "/menu"
   },
   {
     title: "The Menu",
-    subtitle: "Crafted with precision and love.",
+    subtitle: "Created with love and tenderness.",
     image: menuImg,
     cta: "Discover Our Menu",
     link: "/menu"
   },
   {
-    title: "Our Roots",
-    subtitle: "Born and brewed in Nueva Vizcaya.",
-    image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop",
+    title: "Our Story",
+    subtitle: "A home for the soul, a brew for the heart.",
+    image: aboutus,
     cta: "Learn Our Story",
     link: "/about"
   },
   {
     title: "Visit Us",
-    subtitle: "Experience the magic in person.",
-    image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
+    subtitle: "Your cozy corner in the heart of Nueva Vizcaya.",
+    image: visitus,
     cta: "Find Our Location",
     link: "/location"
   }
@@ -45,13 +48,18 @@ const carouselSlides = [
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isIdle, setIsIdle] = useState(true);
 
+  // Autoplay only when user is idle
   useEffect(() => {
+    if (!isIdle) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
     }, 10000); // Change slide every 10 seconds
     return () => clearInterval(timer);
-  }, []);
+  }, [isIdle]);
+
+  // Autoplay pauses while hovering over the carousel (hover-only)
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
@@ -61,14 +69,18 @@ const Home = () => {
       <Navbar />
 
       {/* Premium Hero Carousel */}
-      <Box sx={{ position: 'relative', height: '100vh', width: '100%', overflow: 'hidden' }}>
+      <Box
+        sx={{ position: 'relative', height: '100vh', width: '100%', overflow: 'hidden' }}
+        onMouseEnter={() => setIsIdle(false)}
+        onMouseLeave={() => setIsIdle(true)}
+      >
         <AnimatePresence mode="wait">
           <MotionBox
             key={currentSlide}
             initial={{ opacity: 0, scale: 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
+            transition={{ duration: 1, ease: "easeInOut" }}
             sx={{
               position: 'absolute',
               inset: 0,
@@ -82,7 +94,7 @@ const Home = () => {
                 backgroundImage: `url(${carouselSlides[currentSlide].image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                filter: 'brightness(50%)',
+                filter: 'brightness(65%)', // Darken the image for better text contrast
                 '&::after': {
                   content: '""',
                   position: 'absolute',
@@ -105,10 +117,10 @@ const Home = () => {
                 transition={{ duration: 0.6 }}
                 sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
-                <Typography variant="h1" sx={{ 
-                  fontSize: { xs: '3.5rem', md: '5.5rem', lg: '7.5rem' }, 
-                  mb: 3, 
-                  lineHeight: 1.1, 
+                <Typography variant="h1" sx={{
+                  fontSize: { xs: '3.5rem', md: '5.5rem', lg: '7.5rem' },
+                  mb: 3,
+                  lineHeight: 1.1,
                   fontWeight: 900,
                   textShadow: '0 4px 20px rgba(0,0,0,0.6)'
                 }}>
@@ -122,22 +134,32 @@ const Home = () => {
                     </span>
                   ))}
                 </Typography>
-                <Typography variant="h6" sx={{ 
-                  color: 'rgba(255,255,255,0.85)', 
-                  mb: 6, 
-                  maxWidth: '600px', 
-                  mx: 'auto', 
-                  lineHeight: 1.8, 
-                  fontSize: '1.25rem', 
+                <Typography variant="h6" sx={{
+                  color: 'rgba(255,255,255,0.85)',
+                  mb: 6,
+                  maxWidth: '600px',
+                  mx: 'auto',
+                  lineHeight: 1.8,
+                  fontSize: '1.25rem',
                   fontWeight: 400,
                   textShadow: '0 2px 10px rgba(0,0,0,0.6)'
                 }}>
                   {carouselSlides[currentSlide].subtitle}
                 </Typography>
                 <Stack direction="row" spacing={3} justifyContent="center">
-                  <Button component={RouterLink} to={carouselSlides[currentSlide].link} variant="contained" color="primary" size="large" endIcon={<ArrowForward />} sx={{ py: 2.5, px: 6, fontSize: '1.1rem', borderRadius: 4 }}>
-                    {carouselSlides[currentSlide].cta}
-                  </Button>
+                  {carouselSlides[currentSlide].title !== 'Mug Shot' && carouselSlides[currentSlide].cta && (
+                    <Button
+                      component={RouterLink}
+                      to={carouselSlides[currentSlide].link}
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      endIcon={<ArrowForward />}
+                      sx={{ py: 2.5, px: 6, fontSize: '1.1rem', borderRadius: 4 }}
+                    >
+                      {carouselSlides[currentSlide].cta}
+                    </Button>
+                  )}
                 </Stack>
               </MotionBox>
             </AnimatePresence>

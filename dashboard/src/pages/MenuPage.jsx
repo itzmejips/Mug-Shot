@@ -70,7 +70,7 @@ const MenuPage = () => {
               The Signature Collection
             </Typography>
             <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: '700px', mx: 'auto', fontWeight: 400, lineHeight: 1.6 }}>
-              Carefully curated drinks and delicacies, crafted with seasonal ingredients and a dash of magic.
+              Handcrafted drinks and bites made fresh daily.
             </Typography>
           </Box>
 
@@ -165,7 +165,7 @@ const MenuPage = () => {
                             </Typography>
                           </Box>
                           <Divider sx={{ my: 1, borderColor: 'rgba(211, 47, 47, 0.08)' }} />
-                          <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 900, mt: 'auto', textAlign: 'center', letterSpacing: '-0.5px' }}>
+                          <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', color: 'primary.main', fontWeight: 900, mt: 'auto', textAlign: 'center', letterSpacing: '-0.5px' }}>
                             ₱{item.price}
                           </Typography>
                         </CardContent>

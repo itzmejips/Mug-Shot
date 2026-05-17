@@ -46,13 +46,13 @@ const AboutPage = () => {
 
           <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center', mb: 4 }}>
-              Founded in the heart of Nueva Vizcaya and opening its doors on July 11, 2025, Mug Shot Cafe is more than a destination—it's a sanctuary for the curious and the coffee-obsessed.
+              It all started with a simple belief: that a good cup of coffee can make any day a little brighter. Mug Shot wasn't born out of a big business plan. It grew from a simple dream to build a warm, cozy spot right here in Nueva Vizcaya where people could just sit, slow down, and feel at home.
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center', mb: 4 }}>
-              Located at Boyie Street, Buag, Bambang, Nueva Vizcaya, we started as a small dream to serve the perfect cup, born from a passion for roasting and a deep respect for local farmers.
+              On July 11, 2025, we finally opened our doors on Boyie Street in Bambang. We didn't have much at first—just a small space, a passion for roasting, and a deep respect for our local farmers. We wanted every cup we served to not only taste great, but to also honor the hard work of the hands that grew it.
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center' }}>
-              We believe that great coffee is a conversation starter. Our space is designed to foster connection, creativity, and a moment of peace in your busy day. Each bean is selected for its unique character and roasted to highlight its intrinsic flavors. Our mission is to elevate the local coffee culture while creating a home for everyone who walks through our doors.
+              To us, Mug Shot is so much more than a coffee shop. It's a place where conversations start, old friends catch up, and new ideas are born. Whether you are here to work, to laugh with friends, or just to enjoy a quiet moment with a warm mug, we built this cozy corner for you. We’re so glad to have you as part of our story.
             </Typography>
           </Box>
         </Container>
