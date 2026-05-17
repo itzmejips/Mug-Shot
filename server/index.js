@@ -22,8 +22,13 @@ app.get('/', (req, res) => {
     res.send('Mug Shot Cafe API is running...');
 });
 
-const PORT = process.env.PORT || 5000;
+// Remove your old app.listen() and replace it with this:
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server running locally on port ${PORT}`);
+    });
+}
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// CRUCIAL: Vercel needs this export to handle the routing
+module.exports = app;
