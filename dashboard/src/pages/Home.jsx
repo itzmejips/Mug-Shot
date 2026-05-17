@@ -49,7 +49,7 @@ const Home = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
-    }, 6000);
+    }, 10000); // Change slide every 10 seconds
     return () => clearInterval(timer);
   }, []);
 
