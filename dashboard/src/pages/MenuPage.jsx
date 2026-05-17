@@ -9,6 +9,8 @@ import axios from 'axios';
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -19,7 +21,7 @@ const MenuPage = () => {
     const fetchMenu = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get('http://localhost:5000/api/menu');
+        const { data } = await axios.get(`${API_URL}/api/menu`);
         const transformedItems = data.map(item => ({
           ...item,
           displayCategory: item.category
@@ -142,7 +144,7 @@ const MenuPage = () => {
                           {item.photoUrl ? (
                             <CardMedia
                               component="img"
-                              image={`http://localhost:5000${item.photoUrl}`}
+                              image={`${API_URL}${item.photoUrl}`}
                               alt={item.name}
                               sx={{ height: '100%', width: '100%', objectFit: 'cover', transition: '0.6s', '&:hover': { transform: 'scale(1.02)' } }}
                             />

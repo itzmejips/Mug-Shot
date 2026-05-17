@@ -4,6 +4,8 @@ import { Delete, Edit, Add, Search, CloudUpload, LocalCafe, Close } from '@mui/i
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const MenuManager = () => {
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -25,7 +27,7 @@ const MenuManager = () => {
 
   const fetchItems = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/menu');
+      const { data } = await axios.get(`${API_URL}/api/menu`);
       setItems(data);
     } catch (error) {
       console.error('Error fetching menu', error);
@@ -75,9 +77,9 @@ const MenuManager = () => {
 
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/menu/${editingId}`, data, config);
+        await axios.put(`${API_URL}/api/menu/${editingId}`, data, config);
       } else {
-        await axios.post('http://localhost:5000/api/menu', data, config);
+        await axios.post(`${API_URL}/api/menu`, data, config);
       }
       fetchItems();
       handleClose();
@@ -91,7 +93,7 @@ const MenuManager = () => {
         const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
         const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
         try {
-            await axios.delete(`http://localhost:5000/api/menu/${id}`, config);
+            await axios.delete(`${API_URL}/api/menu/${id}`, config);
             fetchItems();
         } catch (error) {
             console.error('Error deleting item', error);
@@ -157,7 +159,7 @@ const MenuManager = () => {
                   {item.photoUrl ? (
                     <Box 
                       component="img" 
-                      src={`http://localhost:5000${item.photoUrl}`} 
+                      src={`${API_URL}${item.photoUrl}`} 
                       sx={{ width: 56, height: 56, borderRadius: 2, objectFit: 'cover', border: '1px solid rgba(211, 47, 47, 0.12)' }} 
                     />
                   ) : (

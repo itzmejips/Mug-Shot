@@ -3,6 +3,8 @@ import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, Di
 import { Delete, Add, Security, AdminPanelSettings, Close, Edit } from '@mui/icons-material';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const UserManager = () => {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -18,7 +20,7 @@ const UserManager = () => {
     try {
       const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
       const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-      const { data } = await axios.get('http://localhost:5000/api/users', config);
+      const { data } = await axios.get(`${API_URL}/api/users`, config);
       setUsers(data);
     } catch (err) {
       console.error('Error fetching users', err);
@@ -61,10 +63,10 @@ const UserManager = () => {
       
       if (editingId) {
         // Update user
-        await axios.put(`http://localhost:5000/api/users/${editingId}`, payload, config);
+        await axios.put(`${API_URL}/api/users/${editingId}`, payload, config);
       } else {
         // Create user
-        await axios.post('http://localhost:5000/api/users', payload, config);
+        await axios.post(`${API_URL}/api/users`, payload, config);
       }
       
       fetchUsers();
@@ -79,7 +81,7 @@ const UserManager = () => {
       try {
         const adminInfo = JSON.parse(localStorage.getItem('adminInfo'));
         const config = { headers: { 'Authorization': `Bearer ${adminInfo.token}` } };
-        await axios.delete(`http://localhost:5000/api/users/${id}`, config);
+        await axios.delete(`${API_URL}/api/users/${id}`, config);
         fetchUsers();
       } catch (err) {
         console.error('Error deleting user', err);
