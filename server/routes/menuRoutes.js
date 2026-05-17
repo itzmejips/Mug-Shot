@@ -15,16 +15,16 @@ const os = require('os');
 const path = require('path');
 // Cloudinary removed; rely on Supabase or tmp fallback
 
-// No external storage configured — use tmp uploads fallback only
+// No external storage configured — use persistent uploads directory fallback
 
-// Temp uploads directory (matching index.js)
-const tmpUploadsDir = path.join(os.tmpdir(), 'mugshot_uploads');
-const ensureTmpUploadsDir = () => {
+// Persistent uploads directory (in server root for local dev)
+const persistentUploadsDir = path.join(__dirname, '/uploads');
+const ensureUploadsDir = () => {
     const fs = require('fs');
     try {
-        if (!fs.existsSync(tmpUploadsDir)) fs.mkdirSync(tmpUploadsDir, { recursive: true });
+        if (!fs.existsSync(persistentUploadsDir)) fs.mkdirSync(persistentUploadsDir, { recursive: true });
     } catch (err) {
-        console.warn('Could not create tmp uploads dir in route:', err.message);
+        console.warn('Could not create uploads dir in route:', err.message);
     }
 };
 
@@ -111,10 +111,10 @@ router.post('/', uploadLimiter, protect, upload.single('photo'), async (req, res
                 photoId = uploadResult._id;
                 photoUrl = `/api/menu/photo/${photoId.toString()}`;
             } catch (err) {
-                console.warn('GridFS upload failed, falling back to tmp file:', err.message || err);
-                ensureTmpUploadsDir();
+                console.warn('GridFS upload failed, falling back to persistent file:', err.message || err);
+                ensureUploadsDir();
                 const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
-                const filePath = path.join(tmpUploadsDir, filename);
+                const filePath = path.join(persistentUploadsDir, filename);
                 require('fs').writeFileSync(filePath, req.file.buffer);
                 photoUrl = `/uploads/${filename}`;
             }
@@ -177,10 +177,10 @@ router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, r
                 updateFields.photoId = uploadResult._id;
                 updateFields.photoUrl = `/api/menu/photo/${uploadResult._id.toString()}`;
             } catch (err) {
-                console.warn('GridFS upload failed on update, falling back to tmp file:', err.message || err);
-                ensureTmpUploadsDir();
+                console.warn('GridFS upload failed on update, falling back to persistent file:', err.message || err);
+                ensureUploadsDir();
                 const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
-                const filePath = path.join(tmpUploadsDir, filename);
+                const filePath = path.join(persistentUploadsDir, filename);
                 require('fs').writeFileSync(filePath, req.file.buffer);
                 updateFields.photoUrl = `/uploads/${filename}`;
             }
