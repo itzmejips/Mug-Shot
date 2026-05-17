@@ -142,7 +142,7 @@ const MenuManager = () => {
               border: '1px solid rgba(211, 84, 0, 0.1)',
               '& fieldset': { border: 'none' },
               height: '64px',
-              fontSize: '1.1rem'
+              fontSize: '18px'
             }
           }}
         />
@@ -154,11 +154,11 @@ const MenuManager = () => {
           <TableBody>
             {/* Headers row */}
             <TableRow>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2, pl: 0 }}>Image</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Name</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Description</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Price</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Category</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2, pl: 0 }}>Image</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Name</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Description</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Price</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Category</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
 
@@ -178,16 +178,16 @@ const MenuManager = () => {
                     </Box>
                   )}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem", fontWeight: 600 }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px", fontWeight: 600 }}>
                   {item.name}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "0.95rem", maxWidth: '300px' }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "15px", maxWidth: '300px' }}>
                   {item.description ? item.description.charAt(0).toUpperCase() + item.description.slice(1) : 'Experience the richness of our handcrafted selection, prepared fresh daily.'}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem", fontWeight: 700 }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px", fontWeight: 700 }}>
                   ₱{item.price}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px" }}>
                   {item.category}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5 }} align="right">
@@ -248,7 +248,7 @@ const MenuManager = () => {
           color="primary"
           startIcon={<Add />}
           onClick={() => handleOpen()}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
+          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
         >
           Add New Item
         </Button>

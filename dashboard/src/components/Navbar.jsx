@@ -64,7 +64,7 @@ const Navbar = (props) => {
               <Typography variant="h6" sx={{
                 color: 'text.primary',
                 fontWeight: 900,
-                fontSize: { xs: '1.1rem', md: '1.6rem' },
+                fontSize: { xs: '18px', md: '26px' },
                 letterSpacing: '5px',
                 display: { xs: 'none', sm: 'block' }
               }}>MUG</Typography>
@@ -90,7 +90,7 @@ const Navbar = (props) => {
               <Typography variant="h6" sx={{
                 color: 'text.primary',
                 fontWeight: 900,
-                fontSize: { xs: '1.1rem', md: '1.6rem' },
+                fontSize: { xs: '18px', md: '26px' },
                 letterSpacing: '5px',
                 display: { xs: 'none', sm: 'block' }
               }}>SHOT</Typography>
@@ -121,7 +121,7 @@ const Navbar = (props) => {
                     to={item.path}
                     sx={{
                       color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
-                      fontSize: '0.75rem',
+                      fontSize: '12px',
                       fontWeight: 900,
                       px: 2,
                       textTransform: 'uppercase',
@@ -147,7 +147,7 @@ const Navbar = (props) => {
                     to={item.path}
                     sx={{
                       color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
-                      fontSize: '0.75rem',
+                      fontSize: '12px',
                       fontWeight: 900,
                       px: 2,
                       textTransform: 'uppercase',
@@ -170,7 +170,7 @@ const Navbar = (props) => {
                     bgcolor: 'primary.main',
                     color: '#000',
                     fontWeight: 900,
-                    fontSize: '0.7rem',
+                    fontSize: '11px',
                     letterSpacing: 1,
                     px: 3,
                     borderRadius: '20px',

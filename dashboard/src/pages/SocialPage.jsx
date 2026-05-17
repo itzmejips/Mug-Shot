@@ -38,7 +38,7 @@ const SocialPage = () => {
               <Typography variant="overline" sx={{ color: '#D32F2F', fontWeight: 900, letterSpacing: 4, display: 'block' }}>
                 SOCIAL
               </Typography>
-              <Typography variant="h2" sx={{ mb: 4, mt: 2, fontSize: { xs: '2.5rem', md: '4rem' } }}>
+              <Typography variant="h2" sx={{ mb: 4, mt: 2, fontSize: { xs: '40px', md: '64px' } }}>
                 Social Gallery
               </Typography>
               <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: '700px', mx: 'auto', fontWeight: 400, lineHeight: 1.6 }}>
@@ -101,7 +101,7 @@ const SocialPage = () => {
                       py: 1.5,
                       bgcolor: '#1877F2',
                       color: 'white',
-                      fontSize: '0.875rem',
+                      fontSize: '14px',
                       fontWeight: 900,
                       whiteSpace: 'nowrap',
                       minWidth: 'fit-content',

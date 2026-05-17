@@ -118,7 +118,7 @@ const Home = () => {
                 sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
                 <Typography variant="h1" sx={{
-                  fontSize: { xs: '3.5rem', md: '5.5rem', lg: '7.5rem' },
+                  fontSize: { xs: '56px', md: '88px', lg: '120px' },
                   mb: 3,
                   lineHeight: 1.1,
                   fontWeight: 900,
@@ -140,7 +140,7 @@ const Home = () => {
                   maxWidth: '600px',
                   mx: 'auto',
                   lineHeight: 1.8,
-                  fontSize: '1.25rem',
+                  fontSize: '20px',
                   fontWeight: 400,
                   textShadow: '0 2px 10px rgba(0,0,0,0.6)'
                 }}>
@@ -155,7 +155,7 @@ const Home = () => {
                       color="primary"
                       size="large"
                       endIcon={<ArrowForward />}
-                      sx={{ py: 2.5, px: 6, fontSize: '1.1rem', borderRadius: 4 }}
+                      sx={{ py: 2.5, px: 6, fontSize: '18px', borderRadius: 4 }}
                     >
                       {carouselSlides[currentSlide].cta}
                     </Button>

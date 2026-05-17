@@ -66,7 +66,7 @@ const MenuPage = () => {
             <Typography variant="overline" sx={{ color: '#D32F2F', fontWeight: 900, letterSpacing: 4, display: 'block', mb: 2 }}>
               MENU
             </Typography>
-            <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '2.5rem', md: '3.75rem' } }}>
+            <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '40px', md: '60px' } }}>
               Explore Our Menu
             </Typography>
           </Box>
@@ -153,11 +153,11 @@ const MenuPage = () => {
                           )}
                         </Box>
                         <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3, minHeight: '2.6rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3, minHeight: '42px' }}>
                             {item.name}
                           </Typography>
                           <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '2.4rem' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '38px' }}>
                               {item.description || "Experience the depth of flavor in every handcrafted sip."}
                             </Typography>
                           </Box>

@@ -66,7 +66,7 @@ const AdminLayout = () => {
               </ListItemIcon>
               <ListItemText 
                 primary={item.text} 
-                primaryTypographyProps={{ fontWeight: 700, fontSize: '0.95rem' }}
+                primaryTypographyProps={{ fontWeight: 700, fontSize: '15px' }}
               />
             </ListItem>
           );
@@ -124,7 +124,7 @@ const AdminLayout = () => {
           <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
             Mug Shot Admin
           </Typography>
-          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem' }}>
+          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '13px' }}>
             {adminInfo.name?.charAt(0).toUpperCase() || adminInfo.email?.charAt(0).toUpperCase() || 'A'}
           </Avatar>
         </Toolbar>

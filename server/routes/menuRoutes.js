@@ -2,8 +2,14 @@ const express = require('express');
 const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 const upload = require('../middleware/uploadMiddleware');
-const fs = require('fs');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+
+// Configure Cloudinary from environment variables (set these in Vercel)
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // @route   GET /api/menu
 // @desc    Get all menu items
@@ -24,16 +30,16 @@ router.get('/', async (req, res) => {
 router.post('/', upload.single('photo'), async (req, res) => {
     try {
         const { name, description, price, category } = req.body;
-        const photoUrl = req.file ? `/uploads/${req.file.filename}` : '';
 
-        const menuItem = new MenuItem({
-            name,
-            description,
-            price,
-            category,
-            photoUrl
-        });
+        let photoUrl = '';
+        if (req.file && req.file.buffer) {
+            // Upload buffer to Cloudinary using data URI
+            const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
+            photoUrl = uploadRes.secure_url;
+        }
 
+        const menuItem = new MenuItem({ name, description, price, category, photoUrl });
         const createdItem = await menuItem.save();
         res.status(201).json(createdItem);
     } catch (error) {
@@ -54,11 +60,9 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
 
         const { name, description, price, category } = req.body;
         
-        // Find existing to get old photo path
+        // Find existing to use as fallback
         const menuItem = await MenuItem.findById(id);
-        if (!menuItem) {
-            return res.status(404).json({ message: 'Menu item not found' });
-        }
+        if (!menuItem) return res.status(404).json({ message: 'Menu item not found' });
 
         const updateFields = {
             name: name || menuItem.name,
@@ -67,28 +71,13 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
             category: category || menuItem.category
         };
 
-        if (req.file) {
-            // Delete old photo if it exists
-            if (menuItem.photoUrl) {
-                try {
-                    const oldPath = path.join(__dirname, '..', menuItem.photoUrl.replace(/^\//, ''));
-                    if (fs.existsSync(oldPath) && fs.lstatSync(oldPath).isFile()) {
-                        fs.unlinkSync(oldPath);
-                    }
-                } catch (fileErr) {
-                    console.error('Error deleting old physical file:', fileErr);
-                }
-            }
-            updateFields.photoUrl = `/uploads/${req.file.filename}`;
+        if (req.file && req.file.buffer) {
+            const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
+            updateFields.photoUrl = uploadRes.secure_url;
         }
 
-        // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
-        const updatedItem = await MenuItem.findByIdAndUpdate(
-            id,
-            updateFields,
-            { returnDocument: 'after' }
-        );
-
+        const updatedItem = await MenuItem.findByIdAndUpdate(id, updateFields, { returnDocument: 'after' });
         res.json(updatedItem);
     } catch (error) {
         console.error('Menu Put Error:', error);
@@ -105,21 +94,10 @@ router.delete('/:id', async (req, res) => {
         if (!id || id === 'undefined') {
             return res.status(400).json({ message: 'Menu Item ID is required and must be valid' });
         }
-
-        // Based on studied code: findByIdAndDelete()
+        // Delete from DB. If images are hosted externally, we do not attempt to
+        // delete them here unless we stored a provider id.
         const deletedItem = await MenuItem.findByIdAndDelete(id);
         if (deletedItem) {
-            // Safely delete physical file
-            if (deletedItem.photoUrl) {
-                try {
-                    const photoPath = path.join(__dirname, '..', deletedItem.photoUrl.replace(/^\//, ''));
-                    if (fs.existsSync(photoPath) && fs.lstatSync(photoPath).isFile()) {
-                        fs.unlinkSync(photoPath);
-                    }
-                } catch (fileErr) {
-                    console.error('Error deleting physical file:', fileErr);
-                }
-            }
             res.json({ message: 'Menu item removed', item: deletedItem });
         } else {
             res.status(404).json({ message: 'Menu item not found' });

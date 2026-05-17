@@ -100,22 +100,22 @@ const UserManager = () => {
           <TableBody>
             {/* Headers row */}
             <TableRow>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2, pl: 0 }}>Name</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Email</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Password</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2, pl: 0 }}>Name</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Email</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Password</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
 
             {/* User Data rows */}
             {users.map((user, index) => (
               <TableRow key={user._id || index}>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem", pl: 0 }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px", pl: 0 }}>
                   {user.name}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px" }}>
                   {user.email}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px" }}>
                   {user.password}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3 }} align="right">
@@ -176,7 +176,7 @@ const UserManager = () => {
           color="primary"
           startIcon={<Add />}
           onClick={handleOpen}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
+          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
         >
           Add User
         </Button>
@@ -205,7 +205,7 @@ const UserManager = () => {
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
-          {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '0.85rem' }}>{error}</Typography>}
+          {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '14px' }}>{error}</Typography>}
 
           <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
@@ -245,7 +245,7 @@ const UserManager = () => {
             variant="contained"
             color="primary"
             disabled={!formData.name || !formData.email || !formData.password}
-            sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '1rem' }}
+            sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '16px' }}
           >
             {editingId ? 'Save Changes' : 'Add User'}
           </Button>
