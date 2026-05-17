@@ -198,25 +198,16 @@ const UserManager = () => {
           }
         }}
       >
-        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 0 }}>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
           <Typography variant="h4" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
             {editingId ? 'Edit Admin' : 'New Admin'}
           </Typography>
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ textAlign: 'center', mb: 4, mt: 1 }}>
-            <Avatar sx={{ mx: 'auto', mb: 2, background: 'rgba(211, 47, 47, 0.1)', color: 'primary.main', width: 64, height: 64 }}>
-              <AdminPanelSettings fontSize="large" />
-            </Avatar>
-            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-              {editingId ? 'Update User Account .' : 'Add User Account'}
-            </Typography>
-          </Box>
-
+        <DialogContent sx={{ pt: 1 }}>
           {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '0.85rem' }}>{error}</Typography>}
 
-          <Stack spacing={3}>
+          <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
               fullWidth
               label="Name"
@@ -225,7 +216,6 @@ const UserManager = () => {
               onChange={handleChange}
               required
               variant="outlined"
-              placeholder="e.g. John Paul Dres"
             />
             <TextField
               fullWidth
@@ -235,7 +225,6 @@ const UserManager = () => {
               onChange={handleChange}
               required
               variant="outlined"
-              placeholder="e.g. johnpaul00504@gmail.com"
             />
             <TextField
               fullWidth
@@ -246,7 +235,6 @@ const UserManager = () => {
               onChange={handleChange}
               required
               variant="outlined"
-              placeholder="e.g. jp1234"
             />
           </Stack>
         </DialogContent>

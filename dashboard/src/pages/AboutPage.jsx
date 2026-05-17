@@ -46,10 +46,10 @@ const AboutPage = () => {
 
           <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center', mb: 4 }}>
-              It all started with a simple belief: that a good cup of coffee can make any day a little brighter. Mug Shot wasn't born out of a big business plan. It grew from a simple dream to build a warm, cozy spot right here in Nueva Vizcaya where people could just sit, slow down, and feel at home.
+              It all started with a simple belief that a good cup of coffee can make any day a little brighter. Mug Shot wasn't born out of a big business plan. It grew from a simple dream to build a warm, cozy spot right here in Nueva Vizcaya where people could just sit, slow down, and feel at home.
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center', mb: 4 }}>
-              On July 11, 2025, we finally opened our doors on Boyie Street in Bambang. We didn't have much at first—just a small space, a passion for roasting, and a deep respect for our local farmers. We wanted every cup we served to not only taste great, but to also honor the hard work of the hands that grew it.
+              On July 11, 2025, we finally opened our doors on Boyie Street in Bambang. We didn't have much at first, it was just a small space, a passion for roasting, and a deep respect for our local farmers. We wanted every cup we served to not only taste great, but to also honor the hard work of the hands that grew it.
             </Typography>
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.2rem', lineHeight: 2, textAlign: 'center' }}>
               To us, Mug Shot is so much more than a coffee shop. It's a place where conversations start, old friends catch up, and new ideas are born. Whether you are here to work, to laugh with friends, or just to enjoy a quiet moment with a warm mug, we built this cozy corner for you. We’re so glad to have you as part of our story.

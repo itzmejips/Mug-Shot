@@ -67,14 +67,11 @@ const MenuPage = () => {
               MENU
             </Typography>
             <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '2.5rem', md: '3.75rem' } }}>
-              The Signature Collection
-            </Typography>
-            <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: '700px', mx: 'auto', fontWeight: 400, lineHeight: 1.6 }}>
-              Handcrafted drinks and bites made fresh daily.
+              Explore Our Menu
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 2, mb: 8, px: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 3, mb: 8, px: 2 }}>
             <Button
               variant={activeCategory === 'All' ? 'contained' : 'outlined'}
               onClick={() => setActiveCategory('All')}

@@ -23,7 +23,7 @@ const LocationPage = () => {
               <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: 4, display: 'block', mb: 2 }}>LOCATION</Typography>
               <Typography variant="h2" sx={{ mb: 4, fontSize: { xs: '2.5rem', md: '4rem' } }}>Join Us for a Coffee</Typography>
               <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.25rem', maxWidth: '700px', mx: 'auto', lineHeight: 1.6 }}>
-                Visit our cozy sanctuary in Nueva Vizcaya and experience the magic of freshly roasted beans in person.
+                Visit our cafe in Nueva Vizcaya and experience great coffee and good times.
               </Typography>
             </MotionBox>
           </Box>

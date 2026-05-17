@@ -96,17 +96,17 @@ const MenuManager = () => {
     }
 
     try {
-        await axios.delete(`${API_URL}/api/menu/${id}`);
-        alert("Deleted successfully!");
-        fetchItems();
+      await axios.delete(`${API_URL}/api/menu/${id}`);
+      alert("Deleted successfully!");
+      fetchItems();
     } catch (error) {
-        console.error('Error deleting item', error);
-        alert("Delete failed!");
+      console.error('Error deleting item', error);
+      alert("Delete failed!");
     }
   };
 
-  const filteredItems = items.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredItems = items.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -130,9 +130,9 @@ const MenuManager = () => {
                 <Search sx={{ color: 'primary.main', ml: 1 }} />
               </InputAdornment>
             ),
-            sx: { 
-              borderRadius: 4, 
-              bgcolor: 'background.paper', 
+            sx: {
+              borderRadius: 4,
+              bgcolor: 'background.paper',
               border: '1px solid rgba(211, 84, 0, 0.1)',
               '& fieldset': { border: 'none' },
               height: '64px',
@@ -155,16 +155,16 @@ const MenuManager = () => {
               <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Category</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
-            
+
             {/* Data rows */}
             {filteredItems.map((item, index) => (
               <TableRow key={item._id || index}>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, pl: 0 }}>
                   {item.photoUrl ? (
-                    <Box 
-                      component="img" 
-                      src={`${API_URL}${item.photoUrl}`} 
-                      sx={{ width: 56, height: 56, borderRadius: 2, objectFit: 'cover', border: '1px solid rgba(211, 47, 47, 0.12)' }} 
+                    <Box
+                      component="img"
+                      src={`${API_URL}${item.photoUrl}`}
+                      sx={{ width: 56, height: 56, borderRadius: 2, objectFit: 'cover', border: '1px solid rgba(211, 47, 47, 0.12)' }}
                     />
                   ) : (
                     <Box sx={{ width: 56, height: 56, borderRadius: 2, bgcolor: 'rgba(211, 47, 47, 0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(211, 47, 47, 0.12)' }}>
@@ -185,13 +185,13 @@ const MenuManager = () => {
                   {item.category}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5 }} align="right">
-                  <Button 
-                    variant="outlined" 
-                    color="primary" 
+                  <Button
+                    variant="outlined"
+                    color="primary"
                     onClick={() => handleOpen(item)}
-                    sx={{ 
-                      color: "#42a5f5", 
-                      borderColor: "#42a5f5", 
+                    sx={{
+                      color: "#42a5f5",
+                      borderColor: "#42a5f5",
                       fontWeight: 700,
                       px: 3,
                       borderRadius: 1.5,
@@ -204,12 +204,12 @@ const MenuManager = () => {
                   >
                     EDIT
                   </Button>
-                  <Button 
-                    variant="outlined" 
-                    color="error" 
-                    sx={{ 
-                      marginLeft: "10px", 
-                      color: "#ff5252", 
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      marginLeft: "10px",
+                      color: "#ff5252",
                       borderColor: "#ff5252",
                       fontWeight: 700,
                       px: 3,
@@ -237,10 +237,10 @@ const MenuManager = () => {
 
       {/* Button to Create Menu Item */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<Add />} 
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
           onClick={() => handleOpen()}
           sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
         >
@@ -249,19 +249,19 @@ const MenuManager = () => {
       </Box>
 
       {/* Create/Edit Dialog */}
-      <Dialog 
-        open={open} 
-        onClose={handleClose} 
-        maxWidth="sm" 
-        fullWidth 
-        PaperProps={{ 
-          sx: { 
-            borderRadius: 4, 
-            p: 1, 
-            backgroundImage: 'none', 
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            p: 1,
+            backgroundImage: 'none',
             bgcolor: 'background.paper',
             border: '1px solid rgba(211, 47, 47, 0.12)'
-          } 
+          }
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
@@ -274,45 +274,45 @@ const MenuManager = () => {
             <TextField fullWidth label="Detailed Description" name="description" value={formData.description} onChange={handleChange} multiline rows={4} placeholder="Describe the flavors, ingredients, and story behind this item..." />
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <TextField 
-                  fullWidth 
-                  label="Price (PHP)" 
-                  name="price" 
-                  type="number" 
-                  value={formData.price} 
-                  onChange={handleChange} 
-                  required 
+                <TextField
+                  fullWidth
+                  label="Price (PHP)"
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
                   InputProps={{ startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment> }}
                 />
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth>
-                    <InputLabel>Category</InputLabel>
-                    <Select name="category" value={formData.category} onChange={handleChange} required label="Category">
-                        {categories.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
-                    </Select>
+                  <InputLabel>Category</InputLabel>
+                  <Select name="category" value={formData.category} onChange={handleChange} required label="Category">
+                    {categories.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
+                  </Select>
                 </FormControl>
               </Grid>
             </Grid>
             <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 800, color: 'text.primary' }}>Visual Presentation</Typography>
-                <Button
-                  component="label"
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<CloudUpload />}
-                  sx={{ 
-                    py: 3, 
-                    borderStyle: 'dashed', 
-                    borderRadius: 4, 
-                    borderColor: 'rgba(211, 47, 47, 0.3)',
-                    color: 'text.secondary',
-                    '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(211, 47, 47, 0.05)' }
-                  }}
-                >
-                  {formData.photo ? formData.photo.name : 'Select High-Res Image'}
-                  <input type="file" hidden accept="image/*" onChange={handleFileChange} />
-                </Button>
+              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 800, color: 'text.primary' }}>Visual Presentation</Typography>
+              <Button
+                component="label"
+                variant="outlined"
+                fullWidth
+                startIcon={<CloudUpload />}
+                sx={{
+                  py: 3,
+                  borderStyle: 'dashed',
+                  borderRadius: 4,
+                  borderColor: 'rgba(211, 47, 47, 0.3)',
+                  color: 'text.secondary',
+                  '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(211, 47, 47, 0.05)' }
+                }}
+              >
+                {formData.photo ? formData.photo.name : 'Select High-Res Image'}
+                <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+              </Button>
             </Box>
           </Stack>
         </DialogContent>

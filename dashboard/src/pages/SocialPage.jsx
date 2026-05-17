@@ -13,7 +13,7 @@ const SocialPage = () => {
       name: 'Facebook',
       handle: '@MugShotCafe',
       icon: <Facebook sx={{ fontSize: 40 }} />,
-      description: 'Official community hub for events, daily specials, and handcrafted stories.',
+      description: 'Official Facebook Page.',
       link: 'https://www.facebook.com/profile.php?id=61555738840293'
     }
   ];
