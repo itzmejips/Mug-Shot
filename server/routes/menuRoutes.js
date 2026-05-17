@@ -2,22 +2,13 @@ const express = require('express');
 const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 const upload = require('../middleware/uploadMiddleware');
-const cloudinary = require('cloudinary').v2;
 
-// Configure Cloudinary from environment variables (set these in Vercel)
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 const os = require('os');
 const path = require('path');
-const cloudConfigured = Boolean(
-    process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
-);
+// Cloudinary removed; rely on Supabase or tmp fallback
+
+// No external storage configured — use tmp uploads fallback only
 
 // Temp uploads directory (matching index.js)
 const tmpUploadsDir = path.join(os.tmpdir(), 'mugshot_uploads');
@@ -52,20 +43,13 @@ router.post('/', upload.single('photo'), async (req, res) => {
 
         let photoUrl = '';
         if (req.file && req.file.buffer) {
-            if (!cloudConfigured) {
-                console.warn('Cloudinary not configured — received file; saving to tmp uploads.');
-                ensureTmpUploadsDir();
-                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
-                const filePath = path.join(tmpUploadsDir, filename);
-                require('fs').writeFileSync(filePath, req.file.buffer);
-                // Expose via /uploads route
-                photoUrl = `/uploads/${filename}`;
-            } else {
-                // Upload buffer to Cloudinary using data URI
-                const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-                const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
-                photoUrl = uploadRes.secure_url;
-            }
+            // Save to tmp uploads directory (no external storage configured)
+            ensureTmpUploadsDir();
+            const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+            const filePath = path.join(tmpUploadsDir, filename);
+            require('fs').writeFileSync(filePath, req.file.buffer);
+            // Expose via /uploads route
+            photoUrl = `/uploads/${filename}`;
         }
 
         const menuItem = new MenuItem({ name, description, price, category, photoUrl });
@@ -101,18 +85,12 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
         };
 
         if (req.file && req.file.buffer) {
-            if (!cloudConfigured) {
-                console.warn('Cloudinary not configured — received file on update; saving to tmp uploads.');
-                ensureTmpUploadsDir();
-                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
-                const filePath = path.join(tmpUploadsDir, filename);
-                require('fs').writeFileSync(filePath, req.file.buffer);
-                updateFields.photoUrl = `/uploads/${filename}`;
-            } else {
-                const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-                const uploadRes = await cloudinary.uploader.upload(dataUri, { folder: 'mugshot_menu' });
-                updateFields.photoUrl = uploadRes.secure_url;
-            }
+            // Save updated file to tmp uploads directory
+            ensureTmpUploadsDir();
+            const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+            const filePath = path.join(tmpUploadsDir, filename);
+            require('fs').writeFileSync(filePath, req.file.buffer);
+            updateFields.photoUrl = `/uploads/${filename}`;
         }
 
         const updatedItem = await MenuItem.findByIdAndUpdate(id, updateFields, { returnDocument: 'after' });
