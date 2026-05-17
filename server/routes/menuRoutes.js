@@ -52,7 +52,12 @@ router.get('/photo/:id', async (req, res) => {
         const fileDoc = await filesColl.findOne({ _id: fileId });
         if (!fileDoc) return res.status(404).json({ message: 'Image not found' });
 
+        // Allow cross-origin embedding of images (fixes ERR_BLOCKED_BY_ORB)
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Cross-Origin-Resource-Policy', 'cross-origin');
         res.set('Content-Type', fileDoc.contentType || 'application/octet-stream');
+        // Encourage caching for images
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
         const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
         const downloadStream = bucket.openDownloadStream(fileId);
         downloadStream.on('error', (err) => {
