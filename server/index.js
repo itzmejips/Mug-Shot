@@ -11,6 +11,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Ensure CORP/CORS headers are present on all responses (prevents ORB blocking)
+app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+});
 const fs = require('fs');
 const os = require('os');
 

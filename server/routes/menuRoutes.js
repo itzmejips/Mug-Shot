@@ -54,8 +54,11 @@ router.get('/photo/:id', async (req, res) => {
 
         // Allow cross-origin embedding of images (fixes ERR_BLOCKED_BY_ORB)
         res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
         res.set('Cross-Origin-Resource-Policy', 'cross-origin');
         res.set('Content-Type', fileDoc.contentType || 'application/octet-stream');
+        res.set('Content-Length', fileDoc.length);
         // Encourage caching for images
         res.set('Cache-Control', 'public, max-age=31536000, immutable');
         const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
@@ -69,6 +72,15 @@ router.get('/photo/:id', async (req, res) => {
         console.error('Photo stream error:', error);
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
+});
+
+// Handle preflight CORS requests for photo endpoint
+router.options('/photo/:id', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.sendStatus(200);
 });
 
 // @route   POST /api/menu
