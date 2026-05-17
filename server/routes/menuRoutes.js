@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 const upload = require('../middleware/uploadMiddleware');
+const rateLimit = require('express-rate-limit');
+const { protect } = require('../middleware/authMiddleware');
+
+// rate limit: 10 requests per minute per IP for upload routes
+const uploadLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
 
 
 const os = require('os');
@@ -37,9 +42,14 @@ router.get('/', async (req, res) => {
 // @route   POST /api/menu
 // @desc    Create a menu item
 // @access  Public (simplified without JWT)
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
     try {
         const { name, description, price, category } = req.body;
+        // Basic validation
+        if (!name || typeof name !== 'string') return res.status(400).json({ message: 'Name is required' });
+        const priceNum = parseFloat(price);
+        if (isNaN(priceNum) || priceNum < 0) return res.status(400).json({ message: 'Price must be a non-negative number' });
+        if (!category || typeof category !== 'string') return res.status(400).json({ message: 'Category is required' });
 
         let photoUrl = '';
         if (req.file && req.file.buffer) {
@@ -64,7 +74,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
 // @route   PUT /api/menu/:id
 // @desc    Update a menu item
 // @access  Public (simplified without JWT)
-router.put('/:id', upload.single('photo'), async (req, res) => {
+router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
@@ -72,6 +82,7 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
         }
 
         const { name, description, price, category } = req.body;
+        if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) return res.status(400).json({ message: 'Price must be a non-negative number' });
         
         // Find existing to use as fallback
         const menuItem = await MenuItem.findById(id);
@@ -104,7 +115,7 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
 // @route   DELETE /api/menu/:id
 // @desc    Delete a menu item
 // @access  Public (simplified without JWT)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', uploadLimiter, protect, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
