@@ -82,12 +82,12 @@ const Home = () => {
                 backgroundImage: `url(${carouselSlides[currentSlide].image})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                filter: 'brightness(60%)',
+                filter: 'brightness(50%)',
                 '&::after': {
                   content: '""',
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(rgba(12,9,8,0.25), rgba(12,9,8,0.55)), linear-gradient(to top, rgba(12,9,8,0.9) 0%, transparent 30%)',
+                  background: 'linear-gradient(rgba(12,9,8,0.35), rgba(12,9,8,0.65)), linear-gradient(to top, rgba(12,9,8,0.9) 0%, transparent 30%)',
                 }
               }}
             />

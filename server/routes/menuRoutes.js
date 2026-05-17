@@ -49,29 +49,39 @@ router.post('/', protect, upload.single('photo'), async (req, res) => {
 router.put('/:id', protect, upload.single('photo'), async (req, res) => {
     try {
         const { name, description, price, category } = req.body;
+        
+        // Find existing to get old photo path
         const menuItem = await MenuItem.findById(req.params.id);
-
-        if (menuItem) {
-            menuItem.name = name || menuItem.name;
-            menuItem.description = description || menuItem.description;
-            menuItem.price = price || menuItem.price;
-            menuItem.category = category || menuItem.category;
-            if (req.file) {
-                // Delete old photo if it exists
-                if (menuItem.photoUrl) {
-                    const oldPath = path.join(__dirname, '..', menuItem.photoUrl.replace(/^\//, ''));
-                    if (fs.existsSync(oldPath) && fs.lstatSync(oldPath).isFile()) {
-                        fs.unlinkSync(oldPath);
-                    }
-                }
-                menuItem.photoUrl = `/uploads/${req.file.filename}`;
-            }
-
-            const updatedItem = await menuItem.save();
-            res.json(updatedItem);
-        } else {
-            res.status(404).json({ message: 'Menu item not found' });
+        if (!menuItem) {
+            return res.status(404).json({ message: 'Menu item not found' });
         }
+
+        const updateFields = {
+            name: name || menuItem.name,
+            description: description || menuItem.description,
+            price: price || menuItem.price,
+            category: category || menuItem.category
+        };
+
+        if (req.file) {
+            // Delete old photo if it exists
+            if (menuItem.photoUrl) {
+                const oldPath = path.join(__dirname, '..', menuItem.photoUrl.replace(/^\//, ''));
+                if (fs.existsSync(oldPath) && fs.lstatSync(oldPath).isFile()) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+            updateFields.photoUrl = `/uploads/${req.file.filename}`;
+        }
+
+        // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
+        const updatedItem = await MenuItem.findByIdAndUpdate(
+            req.params.id,
+            updateFields,
+            { returnDocument: 'after' }
+        );
+
+        res.json(updatedItem);
     } catch (error) {
         console.error('Menu put error:', error);
         res.status(500).json({ message: 'Server Error', error: error.message });
@@ -83,17 +93,17 @@ router.put('/:id', protect, upload.single('photo'), async (req, res) => {
 // @access  Private
 router.delete('/:id', protect, async (req, res) => {
     try {
-        const menuItem = await MenuItem.findById(req.params.id);
-        if (menuItem) {
+        // Based on studied code: findByIdAndDelete()
+        const deletedItem = await MenuItem.findByIdAndDelete(req.params.id);
+        if (deletedItem) {
             // Delete physical file
-            if (menuItem.photoUrl) {
-                const photoPath = path.join(__dirname, '..', menuItem.photoUrl.replace(/^\//, ''));
+            if (deletedItem.photoUrl) {
+                const photoPath = path.join(__dirname, '..', deletedItem.photoUrl.replace(/^\//, ''));
                 if (fs.existsSync(photoPath) && fs.lstatSync(photoPath).isFile()) {
                     fs.unlinkSync(photoPath);
                 }
             }
-            await menuItem.deleteOne();
-            res.json({ message: 'Menu item removed' });
+            res.json({ message: 'Menu item removed', item: deletedItem });
         } else {
             res.status(404).json({ message: 'Menu item not found' });
         }

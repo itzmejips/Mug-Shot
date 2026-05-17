@@ -26,12 +26,16 @@ router.post('/', protect, async (req, res) => {
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
         }
-        const user = await User.create({ username, password, name, email });
+        
+        // Based on studied code: new User() and save()
+        const newUser = new User({ username, password, name, email });
+        await newUser.save();
+
         res.status(201).json({
-            _id: user._id,
-            username: user.username,
-            name: user.name,
-            email: user.email
+            _id: newUser._id,
+            username: newUser.username,
+            name: newUser.name,
+            email: newUser.email
         });
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -43,10 +47,10 @@ router.post('/', protect, async (req, res) => {
 // @access  Private
 router.delete('/:id', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        if (user) {
-            await user.deleteOne();
-            res.json({ message: 'User removed' });
+        // Based on studied code: findByIdAndDelete()
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        if (deletedUser) {
+            res.json({ message: 'User removed', user: deletedUser });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
@@ -56,19 +60,24 @@ router.delete('/:id', protect, async (req, res) => {
 });
 
 // @route   PUT /api/users/:id
-// @desc    Update a user (password)
+// @desc    Update a user
 // @access  Private
 router.put('/:id', protect, async (req, res) => {
+    const { username, password, name, email } = req.body;
     try {
-        const user = await User.findById(req.params.id);
-        if (user) {
-            user.username = req.body.username || user.username;
-            user.name = req.body.name !== undefined ? req.body.name : user.name;
-            user.email = req.body.email !== undefined ? req.body.email : user.email;
-            if (req.body.password) {
-                user.password = req.body.password;
-            }
-            const updatedUser = await user.save();
+        const updateFields = { username, name, email };
+        if (password) {
+            updateFields.password = password;
+        }
+
+        // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id, 
+            updateFields, 
+            { returnDocument: 'after' }
+        );
+
+        if (updatedUser) {
             res.json({
                 _id: updatedUser._id,
                 username: updatedUser.username,
