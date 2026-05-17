@@ -3,7 +3,7 @@ import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, Di
 import { Delete, Add, Security, AdminPanelSettings, Close, Edit } from '@mui/icons-material';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 const UserManager = () => {
   const [users, setUsers] = useState([]);

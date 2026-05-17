@@ -9,7 +9,7 @@ import axios from 'axios';
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 const MenuPage = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -146,7 +146,7 @@ const MenuPage = () => {
                               component="img"
                               image={`${API_URL}${item.photoUrl}`}
                               alt={item.name}
-                              sx={{ height: '100%', width: '100%', objectFit: 'cover', transition: '0.6s', '&:hover': { transform: 'scale(1.02)' } }}
+                              sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
                             />
                           ) : (
                             <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(211, 47, 47, 0.03)' }}>
