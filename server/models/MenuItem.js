@@ -5,9 +5,7 @@ const menuItemSchema = new mongoose.Schema({
     description: { type: String },
     price: { type: Number, required: true },
     category: { type: String, required: true },
-    photoUrl: { type: String },
-    // GridFS file id when stored in MongoDB
-    photoId: { type: mongoose.Schema.Types.ObjectId }
+    photoUrl: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.models.MenuItem || mongoose.model('MenuItem', menuItemSchema);
