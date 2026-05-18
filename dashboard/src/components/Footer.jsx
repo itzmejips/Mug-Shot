@@ -39,7 +39,7 @@ const Footer = () => {
             }}>
               <img src={logo} alt="Mug Shot Logo" style={{ height: '100%', width: '100%', objectFit: 'contain' }} />
             </Box>
-            <Typography variant="h6" sx={{ color: 'white', fontWeight: 900, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.9rem' }}>
+            <Typography variant="h6" sx={{ color: 'white', fontWeight: 900, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '14px' }}>
               Mug Shot
             </Typography>
           </Box>

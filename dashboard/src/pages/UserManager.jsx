@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Avatar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { Delete, Add, Security, AdminPanelSettings, Close, Edit } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
+import { Add, Close } from '@mui/icons-material';
 import axios from 'axios';
 
 const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
@@ -13,10 +13,6 @@ const UserManager = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const fetchUsers = async () => {
     try {
       const { data } = await axios.get(`${API_URL}/api/users`);
@@ -26,6 +22,17 @@ const UserManager = () => {
     }
   };
 
+  useEffect(() => {
+    void (async () => {
+      try {
+        const { data } = await axios.get(`${API_URL}/api/users`);
+        setUsers(data);
+      } catch (err) {
+        console.error('Error fetching users', err);
+      }
+    })();
+  }, []);
+
   const handleOpen = () => {
     setEditingId(null);
     setFormData({ name: '', email: '', password: '' });
@@ -33,7 +40,7 @@ const UserManager = () => {
     setOpen(true);
   };
 
-  const handleEdit = (user, index) => {
+  const handleEdit = (user) => {
     setEditingId(user._id);
     setFormData({ name: user.name || '', email: user.email || '', password: user.password || '' });
     setError('');
@@ -70,7 +77,7 @@ const UserManager = () => {
   };
 
   const handleDeleteUser = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this administrator?");
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
 
     if (!confirmDelete) {
       alert("Delete Cancelled!");
@@ -100,29 +107,29 @@ const UserManager = () => {
           <TableBody>
             {/* Headers row */}
             <TableRow>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2, pl: 0 }}>Name</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Email</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Password</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2, pl: 0 }}>Name</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Email</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Password</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
 
             {/* User Data rows */}
-            {users.map((user, index) => (
-              <TableRow key={user._id || index}>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem", pl: 0 }}>
+            {users.map((user) => (
+              <TableRow key={user._id}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px", pl: 0 }}>
                   {user.name}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px" }}>
                   {user.email}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px" }}>
                   {user.password}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3 }} align="right">
                   <Button
                     variant="outlined"
                     color="primary"
-                    onClick={() => handleEdit(user, index)}
+                    onClick={() => handleEdit(user)}
                     sx={{
                       color: "#42a5f5",
                       borderColor: "#42a5f5",
@@ -176,7 +183,7 @@ const UserManager = () => {
           color="primary"
           startIcon={<Add />}
           onClick={handleOpen}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
+          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
         >
           Add User
         </Button>
@@ -188,24 +195,26 @@ const UserManager = () => {
         onClose={handleClose}
         maxWidth="xs"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 4,
-            p: 1,
-            backgroundImage: 'none',
-            bgcolor: 'background.paper',
-            border: '1px solid rgba(211, 47, 47, 0.12)'
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+              p: 1,
+              backgroundImage: 'none',
+              bgcolor: 'background.paper',
+              border: '1px solid rgba(211, 47, 47, 0.12)'
+            }
           }
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h4" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
-            {editingId ? 'Edit Admin' : 'New Admin'}
+          <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
+            {editingId ? 'Edit User' : 'Add User'}
           </Typography>
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
-          {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '0.85rem' }}>{error}</Typography>}
+          {error && <Typography color="error" sx={{ mb: 3, textAlign: 'center', bgcolor: 'rgba(255, 82, 82, 0.1)', p: 1.5, borderRadius: 2, fontWeight: 700, fontSize: '14px' }}>{error}</Typography>}
 
           <Stack spacing={3} sx={{ mt: 1 }}>
             <TextField
@@ -245,7 +254,7 @@ const UserManager = () => {
             variant="contained"
             color="primary"
             disabled={!formData.name || !formData.email || !formData.password}
-            sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '1rem' }}
+            sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '16px' }}
           >
             {editingId ? 'Save Changes' : 'Add User'}
           </Button>

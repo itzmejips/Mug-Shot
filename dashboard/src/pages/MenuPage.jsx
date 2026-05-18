@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Container, Grid, Typography, Stack, Button, Card, CardMedia, CardContent, Divider, Chip, CircularProgress } from '@mui/material';
-import { LocalCafe, ArrowForward } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+import { Box, Container, Typography, Button, Card, CardMedia, CardContent, Divider, CircularProgress } from '@mui/material';
+import { LocalCafe } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -66,7 +66,7 @@ const MenuPage = () => {
             <Typography variant="overline" sx={{ color: '#D32F2F', fontWeight: 900, letterSpacing: 4, display: 'block', mb: 2 }}>
               MENU
             </Typography>
-            <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '2.5rem', md: '3.75rem' } }}>
+            <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '40px', md: '60px' } }}>
               Explore Our Menu
             </Typography>
           </Box>
@@ -153,16 +153,16 @@ const MenuPage = () => {
                           )}
                         </Box>
                         <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3, minHeight: '2.6rem' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3, minHeight: '42px' }}>
                             {item.name}
                           </Typography>
                           <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '2.4rem' }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '38px' }}>
                               {item.description || "Experience the depth of flavor in every handcrafted sip."}
                             </Typography>
                           </Box>
                           <Divider sx={{ my: 1, borderColor: 'rgba(211, 47, 47, 0.08)' }} />
-                          <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', color: 'primary.main', fontWeight: 900, mt: 'auto', textAlign: 'center', letterSpacing: '-0.5px' }}>
+                          <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', color: 'primary.main', fontWeight: 900, mt: 'auto', textAlign: 'center', letterSpacing: '-1px' }}>
                             ₱{item.price}
                           </Typography>
                         </CardContent>

@@ -1,6 +1,4 @@
-import React from 'react';
-import { Box, Container, Grid, Typography } from '@mui/material';
-import { LocationOn, AccessTime, Call } from '@mui/icons-material';
+import { Box, Container, Typography } from '@mui/material';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
@@ -21,8 +19,8 @@ const LocationPage = () => {
               transition={{ duration: 0.8 }}
             >
               <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: 4, display: 'block', mb: 2 }}>LOCATION</Typography>
-              <Typography variant="h2" sx={{ mb: 4, fontSize: { xs: '2.5rem', md: '4rem' } }}>Join Us for a Coffee</Typography>
-              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.25rem', maxWidth: '700px', mx: 'auto', lineHeight: 1.6 }}>
+              <Typography variant="h2" sx={{ mb: 4, fontSize: { xs: '40px', md: '64px' } }}>Join Us for a Coffee</Typography>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '20px', maxWidth: '700px', mx: 'auto', lineHeight: 1.6 }}>
                 Visit our cafe in Nueva Vizcaya and experience great coffee and good times.
               </Typography>
             </MotionBox>
@@ -31,7 +29,7 @@ const LocationPage = () => {
           <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography variant="overline" sx={{
               color: 'primary.main',
-              fontSize: '1.1rem',
+              fontSize: '18px',
               fontWeight: 800,
               letterSpacing: 3,
               textTransform: 'uppercase',
@@ -44,7 +42,7 @@ const LocationPage = () => {
               fontWeight: 700,
               color: 'text.primary',
               letterSpacing: 0.5,
-              fontSize: { xs: '1.5rem', md: '2.2rem' }
+              fontSize: { xs: '24px', md: '35px' }
             }}>
               Boyie Street, Buag, Bambang, Nueva Vizcaya
             </Typography>

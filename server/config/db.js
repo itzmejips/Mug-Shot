@@ -8,6 +8,14 @@ const connectDB = async () => {
         }
         await mongoose.connect(uri);
         console.log('MongoDB connected successfully');
+
+        try {
+            await mongoose.connection.collection('users').dropIndex('username_1');
+        } catch (indexError) {
+            if (indexError?.codeName !== 'IndexNotFound' && indexError?.code !== 27) {
+                console.log('Username index cleanup skipped:', indexError.message);
+            }
+        }
     } catch (error) {
         console.error('MongoDB connection failed:', error.message);
         // Don't silently fail - let the error propagate

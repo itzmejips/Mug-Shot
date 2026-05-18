@@ -25,28 +25,28 @@ const theme = createTheme({
   typography: {
     fontFamily: '"Outfit", "Inter", "system-ui", sans-serif',
     h1: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
       fontWeight: 900,
-      letterSpacing: '-0.04em',
+      letterSpacing: '-1px',
       lineHeight: 1.1,
     },
     h2: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
       fontWeight: 800,
-      letterSpacing: '-0.02em',
+      letterSpacing: '0px',
       lineHeight: 1.2,
     },
     h3: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
       fontWeight: 700,
-      letterSpacing: '-0.01em',
+      letterSpacing: '0px',
     },
     h4: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
       fontWeight: 700,
     },
     h5: {
-      fontFamily: '"Playfair Display", serif',
+      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
       fontWeight: 600,
     },
     h6: {
@@ -56,12 +56,12 @@ const theme = createTheme({
     subtitle1: {
       fontFamily: '"Outfit", sans-serif',
       fontWeight: 500,
-      letterSpacing: '0.01em',
+      letterSpacing: '0px',
     },
     button: {
       fontFamily: '"Outfit", sans-serif',
       fontWeight: 700,
-      letterSpacing: '0.04em',
+      letterSpacing: '1px',
       textTransform: 'none',
     }
   },

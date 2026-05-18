@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Divider, IconButton, AppBar, Toolbar, Avatar, Button } from '@mui/material';
-import { RestaurantMenu, People, ExitToApp, Menu as MenuIcon, LocalCafe } from '@mui/icons-material';
+import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, IconButton, AppBar, Toolbar, Avatar, Button } from '@mui/material';
+import { RestaurantMenu, People, ExitToApp, Menu as MenuIcon } from '@mui/icons-material';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 
 const drawerWidth = 260;
@@ -45,8 +45,7 @@ const AdminLayout = () => {
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <ListItem 
-              button 
+            <ListItemButton 
               key={item.text} 
               onClick={() => { navigate(item.path); setMobileOpen(false); }}
               sx={{
@@ -66,9 +65,9 @@ const AdminLayout = () => {
               </ListItemIcon>
               <ListItemText 
                 primary={item.text} 
-                primaryTypographyProps={{ fontWeight: 700, fontSize: '0.95rem' }}
+                slotProps={{ primary: { sx: { fontWeight: 700, fontSize: '15px' } } }}
               />
-            </ListItem>
+            </ListItemButton>
           );
         })}
       </List>
@@ -124,7 +123,7 @@ const AdminLayout = () => {
           <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
             Mug Shot Admin
           </Typography>
-          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem' }}>
+          <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '13px' }}>
             {adminInfo.name?.charAt(0).toUpperCase() || adminInfo.email?.charAt(0).toUpperCase() || 'A'}
           </Avatar>
         </Toolbar>

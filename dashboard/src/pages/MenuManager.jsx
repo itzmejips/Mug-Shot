@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, Button, TextField, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl, Stack, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
-import { Delete, Edit, Add, Search, CloudUpload, LocalCafe, Close } from '@mui/icons-material';
+import { Add, Search, CloudUpload, LocalCafe, Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -17,15 +17,6 @@ const MenuManager = () => {
 
   const categories = ['Rice Meals', 'Pasta and Appetizers', 'Waffle and Sweets', 'Signature Coffee', 'Coffee Lattes', 'Specialty Refreshments'];
 
-  useEffect(() => {
-    const adminInfo = localStorage.getItem('adminInfo');
-    if (!adminInfo) {
-      navigate('/login');
-    } else {
-      fetchItems();
-    }
-  }, [navigate]);
-
   const fetchItems = async () => {
     try {
       const { data } = await axios.get(`${API_URL}/api/menu`);
@@ -34,6 +25,22 @@ const MenuManager = () => {
       console.error('Error fetching menu', error);
     }
   };
+
+  useEffect(() => {
+    const adminInfo = localStorage.getItem('adminInfo');
+    if (!adminInfo) {
+      navigate('/login');
+    } else {
+      void (async () => {
+        try {
+          const { data } = await axios.get(`${API_URL}/api/menu`);
+          setItems(data);
+        } catch (error) {
+          console.error('Error fetching menu', error);
+        }
+      })();
+    }
+  }, [navigate]);
 
   const handleOpen = (item = null) => {
     if (item) {
@@ -142,7 +149,7 @@ const MenuManager = () => {
               border: '1px solid rgba(211, 84, 0, 0.1)',
               '& fieldset': { border: 'none' },
               height: '64px',
-              fontSize: '1.1rem'
+              fontSize: '18px'
             }
           }}
         />
@@ -154,11 +161,11 @@ const MenuManager = () => {
           <TableBody>
             {/* Headers row */}
             <TableRow>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2, pl: 0 }}>Image</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Name</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Description</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Price</TableCell>
-              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "1.1rem", fontWeight: 700, pb: 2 }}>Category</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2, pl: 0 }}>Image</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Name</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Description</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Price</TableCell>
+              <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.12)", fontSize: "18px", fontWeight: 700, pb: 2 }}>Category</TableCell>
               <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}></TableCell>
             </TableRow>
 
@@ -178,16 +185,16 @@ const MenuManager = () => {
                     </Box>
                   )}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem", fontWeight: 600 }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px", fontWeight: 600 }}>
                   {item.name}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "0.95rem", maxWidth: '300px' }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "15px", maxWidth: '300px' }}>
                   {item.description ? item.description.charAt(0).toUpperCase() + item.description.slice(1) : 'Experience the richness of our handcrafted selection, prepared fresh daily.'}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem", fontWeight: 700 }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px", fontWeight: 700 }}>
                   ₱{item.price}
                 </TableCell>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "1rem" }}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5, fontSize: "16px" }}>
                   {item.category}
                 </TableCell>
                 <TableCell sx={{ borderBottom: "1px solid rgba(255,255,255,0.08)", py: 2.5 }} align="right">
@@ -248,7 +255,7 @@ const MenuManager = () => {
           color="primary"
           startIcon={<Add />}
           onClick={() => handleOpen()}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '1rem', fontWeight: 800 }}
+          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
         >
           Add New Item
         </Button>
@@ -260,24 +267,26 @@ const MenuManager = () => {
         onClose={handleClose}
         maxWidth="sm"
         fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 4,
-            p: 1,
-            backgroundImage: 'none',
-            bgcolor: 'background.paper',
-            border: '1px solid rgba(211, 47, 47, 0.12)'
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+              p: 1,
+              backgroundImage: 'none',
+              bgcolor: 'background.paper',
+              border: '1px solid rgba(211, 47, 47, 0.12)'
+            }
           }
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h4" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>{editingId ? 'Edit Item' : 'New Creation'}</Typography>
+          <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>{editingId ? 'Edit Item' : 'Add Item'}</Typography>
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent>
           <Stack spacing={3.5} sx={{ mt: 2 }}>
-            <TextField fullWidth label="Product Name" name="name" value={formData.name} onChange={handleChange} required variant="outlined" placeholder="e.g. Caramel Macchiato" />
-            <TextField fullWidth label="Detailed Description" name="description" value={formData.description} onChange={handleChange} multiline rows={4} placeholder="Describe the flavors, ingredients, and story behind this item..." />
+            <TextField fullWidth label="Name" name="name" value={formData.name} onChange={handleChange} required variant="outlined" />
+            <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={2} />
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <TextField
@@ -288,8 +297,12 @@ const MenuManager = () => {
                   value={formData.price}
                   onChange={handleChange}
                   required
-                  inputProps={{ min: 0 }}
-                  InputProps={{ startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment> }}
+                  slotProps={{
+                    htmlInput: { min: 0 },
+                    input: {
+                      startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment>
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -302,7 +315,7 @@ const MenuManager = () => {
               </Grid>
             </Grid>
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 800, color: 'text.primary' }}>Visual Presentation</Typography>
+              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 800, color: 'text.primary' }}>Image</Typography>
               <Button
                 component="label"
                 variant="outlined"
