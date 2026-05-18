@@ -1,9 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const MenuItem = require('../models/MenuItem');
+const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
 const upload = require('../middleware/uploadMiddleware');
-const fs = require('fs');
+const rateLimit = require('express-rate-limit');
+const { protect } = require('../middleware/authMiddleware');
+
+// rate limit: 10 requests per minute per IP for upload routes
+const uploadLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
+
+
+const os = require('os');
 const path = require('path');
+// Cloudinary removed; rely on Supabase or tmp fallback
+
+// No external storage configured — use persistent uploads directory fallback
+
+// Persistent uploads directory (in server root for local dev)
+const persistentUploadsDir = path.join(__dirname, '/uploads');
+const ensureUploadsDir = () => {
+    const fs = require('fs');
+    try {
+        if (!fs.existsSync(persistentUploadsDir)) fs.mkdirSync(persistentUploadsDir, { recursive: true });
+    } catch (err) {
+        console.warn('Could not create uploads dir in route:', err.message);
+    }
+};
 
 // @route   GET /api/menu
 // @desc    Get all menu items
@@ -18,34 +41,116 @@ router.get('/', async (req, res) => {
     }
 });
 
+// stream image stored in GridFS
+router.get('/photo/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!id) return res.status(400).json({ message: 'Photo id required' });
+        const fileId = new ObjectId(id);
+        const db = mongoose.connection.db;
+        const filesColl = db.collection('menu_images.files');
+        const fileDoc = await filesColl.findOne({ _id: fileId });
+        if (!fileDoc) return res.status(404).json({ message: 'Image not found' });
+
+        // Allow cross-origin embedding of images (fixes ERR_BLOCKED_BY_ORB)
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
+        res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+        res.set('Content-Type', fileDoc.contentType || 'application/octet-stream');
+        res.set('Content-Length', fileDoc.length);
+        // Encourage caching for images
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
+        const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
+        const downloadStream = bucket.openDownloadStream(fileId);
+        downloadStream.on('error', (err) => {
+            console.error('GridFS download error', err);
+            res.status(500).end();
+        });
+        downloadStream.pipe(res);
+    } catch (error) {
+        console.error('Photo stream error:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+});
+
+// Handle preflight CORS requests for photo endpoint
+router.options('/photo/:id', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.sendStatus(200);
+});
+
 // @route   POST /api/menu
 // @desc    Create a menu item
 // @access  Public (simplified without JWT)
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
     try {
+        console.log('POST /api/menu - Received request');
+        console.log('User:', req.user ? req.user._id : 'No user');
+        console.log('Body:', req.body);
+        console.log('File:', req.file ? { name: req.file.originalname, size: req.file.size } : 'No file');
+        
         const { name, description, price, category } = req.body;
-        const photoUrl = req.file ? `/uploads/${req.file.filename}` : '';
+        // Basic validation
+        if (!name || typeof name !== 'string') {
+            console.warn('Validation failed: Name is required');
+            return res.status(400).json({ message: 'Name is required' });
+        }
+        const priceNum = parseFloat(price);
+        if (isNaN(priceNum) || priceNum < 0) {
+            console.warn('Validation failed: Invalid price');
+            return res.status(400).json({ message: 'Price must be a non-negative number' });
+        }
+        if (!category || typeof category !== 'string') {
+            console.warn('Validation failed: Category is required');
+            return res.status(400).json({ message: 'Category is required' });
+        }
 
-        const menuItem = new MenuItem({
-            name,
-            description,
-            price,
-            category,
-            photoUrl
-        });
+        let photoUrl = '';
+        let photoId = null;
+        if (req.file && req.file.buffer) {
+            console.log('Processing file upload:', req.file.originalname);
+            // Try storing in GridFS
+            try {
+                const db = mongoose.connection.db;
+                const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const uploadStream = bucket.openUploadStream(req.file.originalname, { contentType: req.file.mimetype });
+                    uploadStream.on('error', reject);
+                    uploadStream.on('finish', resolve);
+                    uploadStream.end(req.file.buffer);
+                });
+                photoId = uploadResult._id;
+                photoUrl = `/api/menu/photo/${photoId.toString()}`;
+                console.log('File stored in GridFS:', photoUrl);
+            } catch (err) {
+                console.warn('GridFS upload failed, falling back to persistent file:', err.message || err);
+                ensureUploadsDir();
+                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+                const filePath = path.join(persistentUploadsDir, filename);
+                require('fs').writeFileSync(filePath, req.file.buffer);
+                photoUrl = `/uploads/${filename}`;
+                console.log('File saved locally:', photoUrl);
+            }
+        }
 
+        const menuItem = new MenuItem({ name, description, price, category, photoUrl, photoId });
         const createdItem = await menuItem.save();
+        console.log('Menu item created:', createdItem._id);
         res.status(201).json(createdItem);
     } catch (error) {
         console.error('Menu Post Error:', error);
-        res.status(500).json({ message: 'Server Error', error: error.message });
+        res.status(500).json({ message: 'Server Error', error: error.message, stack: error.stack });
     }
 });
 
 // @route   PUT /api/menu/:id
 // @desc    Update a menu item
 // @access  Public (simplified without JWT)
-router.put('/:id', upload.single('photo'), async (req, res) => {
+router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
@@ -53,12 +158,11 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
         }
 
         const { name, description, price, category } = req.body;
+        if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) return res.status(400).json({ message: 'Price must be a non-negative number' });
         
-        // Find existing to get old photo path
+        // Find existing to use as fallback
         const menuItem = await MenuItem.findById(id);
-        if (!menuItem) {
-            return res.status(404).json({ message: 'Menu item not found' });
-        }
+        if (!menuItem) return res.status(404).json({ message: 'Menu item not found' });
 
         const updateFields = {
             name: name || menuItem.name,
@@ -67,28 +171,40 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
             category: category || menuItem.category
         };
 
-        if (req.file) {
-            // Delete old photo if it exists
-            if (menuItem.photoUrl) {
-                try {
-                    const oldPath = path.join(__dirname, '..', menuItem.photoUrl.replace(/^\//, ''));
-                    if (fs.existsSync(oldPath) && fs.lstatSync(oldPath).isFile()) {
-                        fs.unlinkSync(oldPath);
-                    }
-                } catch (fileErr) {
-                    console.error('Error deleting old physical file:', fileErr);
+        if (req.file && req.file.buffer) {
+            // If existing GridFS file present, attempt to delete it
+            try {
+                if (menuItem.photoId) {
+                    const db = mongoose.connection.db;
+                    const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
+                    await bucket.delete(new ObjectId(menuItem.photoId));
                 }
+            } catch (err) {
+                console.warn('Failed to delete old GridFS file:', err.message || err);
             }
-            updateFields.photoUrl = `/uploads/${req.file.filename}`;
+
+            try {
+                const db = mongoose.connection.db;
+                const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const uploadStream = bucket.openUploadStream(req.file.originalname, { contentType: req.file.mimetype });
+                    uploadStream.on('error', reject);
+                    uploadStream.on('finish', resolve);
+                    uploadStream.end(req.file.buffer);
+                });
+                updateFields.photoId = uploadResult._id;
+                updateFields.photoUrl = `/api/menu/photo/${uploadResult._id.toString()}`;
+            } catch (err) {
+                console.warn('GridFS upload failed on update, falling back to persistent file:', err.message || err);
+                ensureUploadsDir();
+                const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
+                const filePath = path.join(persistentUploadsDir, filename);
+                require('fs').writeFileSync(filePath, req.file.buffer);
+                updateFields.photoUrl = `/uploads/${filename}`;
+            }
         }
 
-        // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
-        const updatedItem = await MenuItem.findByIdAndUpdate(
-            id,
-            updateFields,
-            { returnDocument: 'after' }
-        );
-
+        const updatedItem = await MenuItem.findByIdAndUpdate(id, updateFields, { returnDocument: 'after' });
         res.json(updatedItem);
     } catch (error) {
         console.error('Menu Put Error:', error);
@@ -99,27 +215,27 @@ router.put('/:id', upload.single('photo'), async (req, res) => {
 // @route   DELETE /api/menu/:id
 // @desc    Delete a menu item
 // @access  Public (simplified without JWT)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', uploadLimiter, protect, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
             return res.status(400).json({ message: 'Menu Item ID is required and must be valid' });
         }
-
-        // Based on studied code: findByIdAndDelete()
+        // Delete from DB. If images are hosted externally, we do not attempt to
+        // delete them here unless we stored a provider id.
         const deletedItem = await MenuItem.findByIdAndDelete(id);
         if (deletedItem) {
-            // Safely delete physical file
-            if (deletedItem.photoUrl) {
-                try {
-                    const photoPath = path.join(__dirname, '..', deletedItem.photoUrl.replace(/^\//, ''));
-                    if (fs.existsSync(photoPath) && fs.lstatSync(photoPath).isFile()) {
-                        fs.unlinkSync(photoPath);
-                    }
-                } catch (fileErr) {
-                    console.error('Error deleting physical file:', fileErr);
+            // Attempt to remove GridFS file if present
+            try {
+                if (deletedItem.photoId) {
+                    const db = mongoose.connection.db;
+                    const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'menu_images' });
+                    await bucket.delete(new ObjectId(deletedItem.photoId));
                 }
+            } catch (err) {
+                console.warn('Failed to remove GridFS file during delete:', err.message || err);
             }
+
             res.json({ message: 'Menu item removed', item: deletedItem });
         } else {
             res.status(404).json({ message: 'Menu item not found' });

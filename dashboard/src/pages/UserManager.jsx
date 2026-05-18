@@ -114,9 +114,9 @@ const UserManager = () => {
             </TableRow>
 
             {/* User Data rows */}
-            {users.map((user) => (
-              <TableRow key={user._id}>
-                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px", pl: 0 }}>
+            {users.map((user, index) => (
+              <TableRow key={user._id || index}>
+                <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "1rem", pl: 0 }}>
                   {user.name}
                 </TableCell>
                 <TableCell sx={{ color: "white", borderBottom: "1px solid rgba(255,255,255,0.08)", py: 3, fontSize: "16px" }}>

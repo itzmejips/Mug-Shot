@@ -1,32 +1,23 @@
 const multer = require('multer');
 const path = require('path');
 
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename(req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-    }
-});
+// Use memory storage so uploaded files are available as buffers.
+// In production (Vercel) we upload buffers to Cloudinary/S3 instead
+// of writing to disk in the serverless environment.
+const storage = multer.memoryStorage();
 
-const checkFileType = (file, cb) => {
+const fileFilter = (req, file, cb) => {
     const filetypes = /jpg|jpeg|png/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype);
 
     if (extname && mimetype) {
-        return cb(null, true);
+        cb(null, true);
     } else {
-        cb('Images only!');
+        cb(new Error('Images only!'));
     }
 };
 
-const upload = multer({
-    storage,
-    fileFilter: function (req, file, cb) {
-        checkFileType(file, cb);
-    }
-});
+const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
 
 module.exports = upload;

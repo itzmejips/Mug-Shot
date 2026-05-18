@@ -16,10 +16,11 @@ const MenuManager = () => {
   const navigate = useNavigate();
 
   const categories = ['Rice Meals', 'Pasta and Appetizers', 'Waffle and Sweets', 'Signature Coffee', 'Coffee Lattes', 'Specialty Refreshments'];
-
   const fetchItems = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/api/menu`);
+      const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
+      const headers = adminInfo && adminInfo.token ? { Authorization: `Bearer ${adminInfo.token}` } : {};
+      const { data } = await axios.get(`${API_URL}/api/menu`, { headers });
       setItems(data);
     } catch (error) {
       console.error('Error fetching menu', error);
@@ -27,19 +28,22 @@ const MenuManager = () => {
   };
 
   useEffect(() => {
-    const adminInfo = localStorage.getItem('adminInfo');
-    if (!adminInfo) {
+    const adminInfoRaw = localStorage.getItem('adminInfo');
+    const adminInfo = adminInfoRaw ? JSON.parse(adminInfoRaw) : null;
+    if (!adminInfo || !adminInfo.token) {
+      // Ensure a fresh login so the token is available for protected actions
       navigate('/login');
-    } else {
-      void (async () => {
-        try {
-          const { data } = await axios.get(`${API_URL}/api/menu`);
-          setItems(data);
-        } catch (error) {
-          console.error('Error fetching menu', error);
-        }
-      })();
+      return;
     }
+    void (async () => {
+      try {
+        const headers = { Authorization: `Bearer ${adminInfo.token}` };
+        const { data } = await axios.get(`${API_URL}/api/menu`, { headers });
+        setItems(data);
+      } catch (error) {
+        console.error('Error fetching menu', error);
+      }
+    })();
   }, [navigate]);
 
   const handleOpen = (item = null) => {
@@ -58,13 +62,7 @@ const MenuManager = () => {
   };
 
   const handleChange = (e) => {
-    let value = e.target.value;
-    if (e.target.name === 'price') {
-      if (parseFloat(value) < 0) {
-        value = '0';
-      }
-    }
-    setFormData({ ...formData, [e.target.name]: value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
@@ -89,8 +87,12 @@ const MenuManager = () => {
 
     try {
       if (editingId) {
+        const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
+        if (adminInfo && adminInfo.token) config.headers = { ...config.headers, Authorization: `Bearer ${adminInfo.token}` };
         await axios.put(`${API_URL}/api/menu/${editingId}`, data, config);
       } else {
+        const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
+        if (adminInfo && adminInfo.token) config.headers = { ...config.headers, Authorization: `Bearer ${adminInfo.token}` };
         await axios.post(`${API_URL}/api/menu`, data, config);
       }
       fetchItems();
@@ -109,7 +111,9 @@ const MenuManager = () => {
     }
 
     try {
-      await axios.delete(`${API_URL}/api/menu/${id}`);
+      const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
+      const headers = adminInfo && adminInfo.token ? { Authorization: `Bearer ${adminInfo.token}` } : {};
+      await axios.delete(`${API_URL}/api/menu/${id}`, { headers });
       alert("Deleted successfully!");
       fetchItems();
     } catch (error) {
@@ -176,7 +180,7 @@ const MenuManager = () => {
                   {item.photoUrl ? (
                     <Box
                       component="img"
-                      src={`${API_URL}${item.photoUrl}`}
+                      src={/^(https?:)?\/\//i.test(item.photoUrl) ? item.photoUrl : `${API_URL}${item.photoUrl}`}
                       sx={{ width: 56, height: 56, borderRadius: 2, objectFit: 'cover', border: '1px solid rgba(211, 47, 47, 0.12)' }}
                     />
                   ) : (
