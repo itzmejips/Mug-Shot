@@ -200,7 +200,7 @@ const UserManager = () => {
         slotProps={{
           paper: {
             sx: {
-              borderRadius: 4,
+              borderRadius: 3, // Match 12px rounding of login form container
               p: 1,
               backgroundImage: 'none',
               bgcolor: 'background.paper',
@@ -210,7 +210,7 @@ const UserManager = () => {
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
+          <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
             {editingId ? 'Edit User' : 'Add User'}
           </Typography>
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
@@ -241,7 +241,7 @@ const UserManager = () => {
               fullWidth
               label="Password"
               name="password"
-              type="text" // Shown in plain text as requested in screenshot edit/displays
+              type="text"
               value={formData.password}
               onChange={handleChange}
               required
@@ -256,11 +256,11 @@ const UserManager = () => {
             variant="contained"
             color="primary"
             disabled={!formData.name || !formData.email || !formData.password}
-            sx={{ py: 2, borderRadius: 3, fontWeight: 900, fontSize: '16px' }}
+            sx={{ py: 1.5, borderRadius: 3, fontWeight: 'bold', fontSize: '16px' }}
           >
             {editingId ? 'Save Changes' : 'Add User'}
           </Button>
-          <Button fullWidth onClick={handleClose} sx={{ fontWeight: 700, color: 'text.secondary' }}>
+          <Button fullWidth onClick={handleClose} variant="text" sx={{ fontWeight: 700, color: 'text.secondary' }}>
             Cancel
           </Button>
         </DialogActions>

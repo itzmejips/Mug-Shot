@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import './Home.css';
 
 // Local Asset Imports
 import mugshotImg from '../assets/MugShot.jpeg';
@@ -18,8 +19,7 @@ const carouselSlides = [
   {
     title: "Mug Shot",
     subtitle: "Bringing stories into life with every sip",
-    image: mugshotImg
-    ,
+    image: mugshotImg,
     cta: "Explore Cafe",
     link: "/menu"
   },
@@ -59,18 +59,16 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [isIdle]);
 
-  // Autoplay pauses while hovering over the carousel (hover-only)
-
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
 
   return (
-    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh', color: 'text.primary', overflowX: 'hidden' }}>
+    <Box className="home-container">
       <Navbar />
 
       {/* Premium Hero Carousel */}
       <Box
-        sx={{ position: 'relative', height: '100vh', width: '100%', overflow: 'hidden' }}
+        className="carousel-viewport"
         onMouseEnter={() => setIsIdle(false)}
         onMouseLeave={() => setIsIdle(true)}
       >
@@ -81,33 +79,17 @@ const Home = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 1, ease: "easeInOut" }}
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 0,
-            }}
+            className="slide-wrapper"
           >
             <Box
-              sx={{
-                width: '100%',
-                height: '100%',
-                backgroundImage: `url(${carouselSlides[currentSlide].image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'brightness(65%)', // Darken the image for better text contrast
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(rgba(12,9,8,0.35), rgba(12,9,8,0.65)), linear-gradient(to top, rgba(12,9,8,0.9) 0%, transparent 30%)',
-                }
-              }}
+              className="slide-background"
+              style={{ backgroundImage: `url(${carouselSlides[currentSlide].image})` }}
             />
           </MotionBox>
         </AnimatePresence>
 
         <Container maxWidth="xl" sx={{ height: '100%', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Box sx={{ maxWidth: '800px', pt: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <Box className="hero-content-box">
             <AnimatePresence mode="wait">
               <MotionBox
                 key={currentSlide}
@@ -115,35 +97,20 @@ const Home = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.6 }}
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                className="hero-slide-content"
               >
-                <Typography variant="h1" sx={{
-                  fontSize: { xs: '56px', md: '88px', lg: '120px' },
-                  mb: 3,
-                  lineHeight: 1.1,
-                  fontWeight: 900,
-                  textShadow: '0 4px 20px rgba(0,0,0,0.6)'
-                }}>
+                <Typography variant="h1" className="hero-title">
                   {carouselSlides[currentSlide].title.split(' ').map((word, i) => (
                     <span key={i}>
                       {i === 1 ? (
-                        <Box component="span" sx={{ color: 'primary.main' }}>{word}</Box>
+                        <Box component="span" className="hero-title-highlight">{word}</Box>
                       ) : (
                         word + ' '
                       )}
                     </span>
                   ))}
                 </Typography>
-                <Typography variant="h6" sx={{
-                  color: 'rgba(255,255,255,0.85)',
-                  mb: 6,
-                  maxWidth: '600px',
-                  mx: 'auto',
-                  lineHeight: 1.8,
-                  fontSize: '20px',
-                  fontWeight: 400,
-                  textShadow: '0 2px 10px rgba(0,0,0,0.6)'
-                }}>
+                <Typography variant="h6" className="hero-subtitle">
                   {carouselSlides[currentSlide].subtitle}
                 </Typography>
                 <Stack direction="row" spacing={3} justifyContent="center">
@@ -152,10 +119,9 @@ const Home = () => {
                       component={RouterLink}
                       to={carouselSlides[currentSlide].link}
                       variant="contained"
-                      color="primary"
                       size="large"
                       endIcon={<ArrowForward />}
-                      sx={{ py: 2.5, px: 6, fontSize: '18px', borderRadius: 4 }}
+                      className="hero-button"
                     >
                       {carouselSlides[currentSlide].cta}
                     </Button>
@@ -167,44 +133,31 @@ const Home = () => {
         </Container>
 
         {/* Carousel Navigation */}
-        <Box sx={{ position: 'absolute', bottom: 60, right: 80, zIndex: 2, display: 'flex', gap: 2 }}>
+        <Box className="carousel-nav">
           <IconButton
             onClick={prevSlide}
-            sx={{
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: 'white',
-              p: 2,
-              '&:hover': { bgcolor: 'primary.main', borderColor: 'primary.main' }
-            }}
+            className="carousel-nav-btn"
           >
             <ChevronLeft fontSize="large" />
           </IconButton>
           <IconButton
             onClick={nextSlide}
-            sx={{
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: 'white',
-              p: 2,
-              '&:hover': { bgcolor: 'primary.main', borderColor: 'primary.main' }
-            }}
+            className="carousel-nav-btn"
           >
             <ChevronRight fontSize="large" />
           </IconButton>
         </Box>
 
         {/* Slide Indicators */}
-        <Box sx={{ position: 'absolute', bottom: 80, left: 80, zIndex: 2, display: 'flex', gap: 1.5 }}>
+        <Box className="slide-indicators">
           {carouselSlides.map((_, i) => (
             <Box
               key={i}
               onClick={() => setCurrentSlide(i)}
-              sx={{
+              className="slide-indicator-dot"
+              style={{
                 width: i === currentSlide ? 40 : 12,
-                height: 4,
-                bgcolor: i === currentSlide ? 'primary.main' : 'rgba(255,255,255,0.2)',
-                borderRadius: 2,
-                transition: '0.6s',
-                cursor: 'pointer'
+                backgroundColor: i === currentSlide ? '#D32F2F' : 'rgba(255,255,255,0.2)'
               }}
             />
           ))}
@@ -217,6 +170,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 

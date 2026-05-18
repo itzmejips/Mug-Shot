@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import './MenuPage.css';
 
 const MotionBox = motion(Box);
 const MotionCard = motion(Card);
@@ -57,25 +58,31 @@ const MenuPage = () => {
     : menuItems.filter(item => item.displayCategory === activeCategory);
 
   return (
-    <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh', color: 'text.primary', overflowX: 'hidden' }}>
+    <Box className="menu-page-container">
       <Navbar />
 
-      <Box sx={{ pt: { xs: 15, md: 20 }, pb: 15, bgcolor: 'background.paper', position: 'relative', overflow: 'hidden' }}>
+      <Box className="menu-hero">
         <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
-          <Box sx={{ textAlign: 'center', mb: 10 }}>
-            <Typography variant="overline" sx={{ color: '#D32F2F', fontWeight: 900, letterSpacing: 4, display: 'block', mb: 2 }}>
-              MENU
-            </Typography>
-            <Typography variant="h2" sx={{ mb: 3, fontSize: { xs: '40px', md: '60px' } }}>
-              Explore Our Menu
-            </Typography>
+          <Box className="menu-header">
+            <MotionBox
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Typography variant="overline" className="menu-overline">
+                MENU
+              </Typography>
+              <Typography variant="h2" className="menu-title">
+                Explore Our Menu
+              </Typography>
+            </MotionBox>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: 3, mb: 8, px: 2 }}>
+          <Box className="category-bar">
             <Button
               variant={activeCategory === 'All' ? 'contained' : 'outlined'}
               onClick={() => setActiveCategory('All')}
-              sx={{ borderRadius: 10, px: 4, whiteSpace: 'nowrap', minWidth: 'fit-content' }}
+              className="category-button"
             >
               All
             </Button>
@@ -84,7 +91,7 @@ const MenuPage = () => {
                 key={cat}
                 variant={activeCategory === cat ? 'contained' : 'outlined'}
                 onClick={() => setActiveCategory(cat)}
-                sx={{ borderRadius: 10, px: 4, whiteSpace: 'nowrap', minWidth: 'fit-content' }}
+                className="category-button"
               >
                 {cat}
               </Button>
@@ -92,7 +99,7 @@ const MenuPage = () => {
           </Box>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+            <Box className="loading-box">
               <CircularProgress color="primary" size={60} thickness={4} />
             </Box>
           ) : (
@@ -106,63 +113,42 @@ const MenuPage = () => {
                 sx={{ width: '100%' }}
               >
                 {filteredItems.length === 0 ? (
-                  <Box sx={{ textAlign: 'center', py: 10 }}>
+                  <Box className="empty-menu-box">
                     <Typography variant="h5" sx={{ color: 'text.secondary' }}>Our menu is being updated. Stay tuned!</Typography>
                   </Box>
                 ) : (
-                  <Box sx={{
-                    display: 'grid',
-                    gridTemplateColumns: {
-                      xs: '1fr',
-                      sm: 'repeat(2, 1fr)',
-                      md: 'repeat(3, 1fr)',
-                      lg: 'repeat(4, 1fr)'
-                    },
-                    gap: 4,
-                    width: '100%',
-                    justifyItems: 'center',
-                    alignItems: 'stretch'
-                  }}>
+                  <Box className="menu-grid">
                     {filteredItems.map((item) => (
                       <MotionCard
                         key={item._id}
                         variants={itemVariants}
-                        sx={{
-                          width: '100%',
-                          maxWidth: '340px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          borderRadius: 0,
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                          border: '1px solid rgba(211, 47, 47, 0.1)',
-                          height: '100%'
-                        }}
+                        className="menu-card"
                       >
-                        <Box sx={{ position: 'relative', overflow: 'hidden', width: '100%', aspectRatio: '1 / 1' }}>
+                        <Box className="photo-wrapper">
                           {item.photoUrl ? (
                             <CardMedia
                               component="img"
                               image={/^(https?:)?\/\//i.test(item.photoUrl) ? item.photoUrl : `${API_URL}${item.photoUrl}`}
                               alt={item.name}
-                              sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
+                              className="photo-media"
                             />
                           ) : (
-                            <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(211, 47, 47, 0.03)' }}>
+                            <Box className="no-photo-box">
                               <LocalCafe sx={{ fontSize: 60, color: '#D32F2F', opacity: 0.3 }} />
                             </Box>
                           )}
                         </Box>
-                        <CardContent sx={{ p: 2.5, flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 800, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3, minHeight: '42px' }}>
+                        <CardContent className="menu-card-content">
+                          <Typography variant="h6" className="item-name">
                             {item.name}
                           </Typography>
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '38px' }}>
+                          <Box className="item-desc-box">
+                            <Typography variant="body2" className="item-desc">
                               {item.description || "Experience the depth of flavor in every handcrafted sip."}
                             </Typography>
                           </Box>
-                          <Divider sx={{ my: 1, borderColor: 'rgba(211, 47, 47, 0.08)' }} />
-                          <Typography variant="h5" sx={{ fontFamily: '"Outfit", sans-serif', color: 'primary.main', fontWeight: 900, mt: 'auto', textAlign: 'center', letterSpacing: '-1px' }}>
+                          <Divider className="item-divider" />
+                          <Typography variant="h5" className="item-price">
                             ₱{item.price}
                           </Typography>
                         </CardContent>
@@ -182,3 +168,4 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
+

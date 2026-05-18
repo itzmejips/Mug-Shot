@@ -1,0 +1,218 @@
+/* SocialPage.css - Scoped styles for Mug Shot Cafe Social Gallery */
+
+.social-page-container {
+  background-color: #120F0D;
+  min-height: 100vh;
+  color: #FDF5E6;
+  overflow-x: hidden;
+}
+
+.social-page-hero {
+  padding-top: 200px;
+  padding-bottom: 160px;
+}
+
+@media (max-width: 900px) {
+  .social-page-hero {
+    padding-top: 120px;
+    padding-bottom: 80px;
+  }
+}
+
+.social-header {
+  text-align: center;
+  margin-bottom: 96px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.social-overline {
+  color: #D32F2F;
+  font-weight: 900;
+  letter-spacing: 4px;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.social-title {
+  margin-bottom: 32px;
+  margin-top: 16px;
+  font-size: 64px;
+  font-family: "Gotham", sans-serif;
+  font-weight: 800;
+  text-align: center;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .social-title {
+    font-size: 40px;
+  }
+}
+
+.social-subtitle {
+  color: #A09088;
+  max-width: 700px;
+  margin: 0 auto;
+  font-weight: 400;
+  line-height: 1.6;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 160px;
+}
+
+.platform-card {
+  padding: 32px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 40px !important;
+  background-color: rgba(28, 24, 22, 0.6) !important;
+  backdrop-filter: blur(30px);
+  border-radius: 16px !important;
+  border: 1px solid rgba(211, 47, 47, 0.15) !important;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .platform-card {
+    flex-direction: column !important;
+    padding: 24px !important;
+    gap: 24px !important;
+  }
+}
+
+.platform-avatar {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1877F2;
+  color: #1877F2;
+  background-color: rgba(24, 119, 242, 0.05);
+  border-radius: 50%;
+}
+
+.platform-info {
+  flex-grow: 1;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .platform-info {
+    text-align: center;
+  }
+}
+
+.platform-info-stack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .platform-info-stack {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.platform-name {
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  font-family: "Gotham", sans-serif !important;
+}
+
+.platform-handle {
+  color: #D32F2F !important;
+  font-weight: 600 !important;
+  opacity: 0.9;
+  line-height: 1 !important;
+  transform: translateY(-1px);
+}
+
+.platform-description {
+  color: #A09088 !important;
+  margin-bottom: 0 !important;
+  opacity: 0.8;
+}
+
+.follow-button {
+  border-radius: 16px !important;
+  padding: 12px 32px !important;
+  background-color: #1877F2 !important;
+  color: white !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  white-space: nowrap;
+  min-width: fit-content;
+  box-shadow: 0 10px 20px rgba(24, 119, 242, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.follow-button:hover {
+  background-color: white !important;
+  color: #1877F2 !important;
+  transform: translateY(-2px);
+}
+
+.gallery-container {
+  text-align: center;
+}
+
+.gallery-title {
+  font-weight: 900 !important;
+  margin-bottom: 16px !important;
+  font-family: "Gotham", sans-serif !important;
+}
+
+.gallery-divider {
+  width: 80px;
+  height: 4px;
+  background-color: #D32F2F;
+  margin: 0 auto 80px;
+}
+
+.post-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 96px;
+}
+
+.post-frame {
+  padding: 8px;
+  background-color: #1C1816;
+  border: 2px solid rgba(211, 47, 47, 0.4);
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.7);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.post-frame:hover {
+  border-color: #D32F2F;
+  transform: scale(1.02);
+}
+
+@media (max-width: 900px) {
+  .post-frame {
+    padding: 4px;
+  }
+}

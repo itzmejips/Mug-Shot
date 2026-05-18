@@ -10,7 +10,7 @@ const API_URL = rawApiUrl.replace(/\/$/, "");
 const MenuManager = () => {
   const [items, setItems] = useState([]);
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', photo: null });
+  const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', photo: null, photoUrl: '', isPhotoRemoved: false });
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
@@ -48,10 +48,10 @@ const MenuManager = () => {
 
   const handleOpen = (item = null) => {
     if (item) {
-      setFormData({ name: item.name, description: item.description, price: item.price, category: item.category, photo: null });
+      setFormData({ name: item.name, description: item.description, price: item.price, category: item.category, photo: null, photoUrl: item.photoUrl || '', isPhotoRemoved: false });
       setEditingId(item._id);
     } else {
-      setFormData({ name: '', description: '', price: '', category: '', photo: null });
+      setFormData({ name: '', description: '', price: '', category: '', photo: null, photoUrl: '', isPhotoRemoved: false });
       setEditingId(null);
     }
     setOpen(true);
@@ -66,7 +66,13 @@ const MenuManager = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, photo: e.target.files[0] });
+    if (e.target.files[0]) {
+      setFormData({ ...formData, photo: e.target.files[0], isPhotoRemoved: false });
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setFormData({ ...formData, photo: null, photoUrl: '', isPhotoRemoved: true });
   };
 
   const handleSubmit = async () => {
@@ -83,6 +89,9 @@ const MenuManager = () => {
     data.append('category', formData.category);
     if (formData.photo) {
       data.append('photo', formData.photo);
+    }
+    if (formData.isPhotoRemoved) {
+      data.append('removePhoto', 'true');
     }
 
     try {
@@ -279,7 +288,7 @@ const MenuManager = () => {
         slotProps={{
           paper: {
             sx: {
-              borderRadius: 4,
+              borderRadius: 3, // Exactly matching the 12px rounding of the login card container
               p: 1,
               backgroundImage: 'none',
               bgcolor: 'background.paper',
@@ -289,65 +298,79 @@ const MenuManager = () => {
         }}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-          <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>{editingId ? 'Edit Item' : 'Add Item'}</Typography>
+          <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+            {editingId ? 'Edit Item' : 'Add Item'}
+          </Typography>
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent>
           <Stack spacing={3.5} sx={{ mt: 2 }}>
             <TextField fullWidth label="Name" name="name" value={formData.name} onChange={handleChange} required variant="outlined" />
             <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={2} />
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Price (PHP)"
-                  name="price"
-                  type="number"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  slotProps={{
-                    htmlInput: { min: 0 },
-                    input: {
-                      startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment>
-                    }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <InputLabel>Category</InputLabel>
-                  <Select name="category" value={formData.category} onChange={handleChange} required label="Category">
-                    {categories.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
+            <TextField
+              fullWidth
+              label="Price (PHP)"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              slotProps={{
+                htmlInput: { min: 0 },
+                input: {
+                  startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment>
+                }
+              }}
+            />
+            <FormControl fullWidth>
+              <InputLabel>Category</InputLabel>
+              <Select name="category" value={formData.category} onChange={handleChange} required label="Category">
+                {categories.map(cat => <MenuItem key={cat} value={cat}>{cat}</MenuItem>)}
+              </Select>
+            </FormControl>
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 800, color: 'text.primary' }}>Image</Typography>
-              <Button
-                component="label"
-                variant="outlined"
-                fullWidth
-                startIcon={<CloudUpload />}
-                sx={{
-                  py: 3,
-                  borderStyle: 'dashed',
-                  borderRadius: 4,
-                  borderColor: 'rgba(211, 47, 47, 0.3)',
-                  color: 'text.secondary',
-                  '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(211, 47, 47, 0.05)' }
-                }}
-              >
-                {formData.photo ? formData.photo.name : 'Select High-Res Image'}
-                <input type="file" hidden accept="image/*" onChange={handleFileChange} />
-              </Button>
+              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700, color: 'text.secondary' }}>Image</Typography>
+              <Stack direction="row" spacing={2}>
+                <Button
+                  component="label"
+                  variant="outlined"
+                  fullWidth
+                  startIcon={<CloudUpload />}
+                  sx={{
+                    py: 1.5,
+                    borderRadius: 3,
+                    borderColor: 'rgba(211, 47, 47, 0.3)',
+                    color: 'text.secondary',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(211, 47, 47, 0.05)' }
+                  }}
+                >
+                  {formData.photo ? formData.photo.name : (formData.photoUrl ? 'Change Image' : 'Select Image')}
+                  <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  fullWidth
+                  disabled={!formData.photo && !formData.photoUrl}
+                  onClick={handleRemovePhoto}
+                  sx={{
+                    borderRadius: 3,
+                    fontWeight: 'bold',
+                    py: 1.5,
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Remove Image
+                </Button>
+              </Stack>
             </Box>
           </Stack>
         </DialogContent>
         <DialogActions sx={{ p: 4, pt: 2 }}>
           <Button onClick={handleClose} variant="text" sx={{ fontWeight: 700, color: 'text.secondary', px: 3 }}>Discard</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ px: 5, py: 1.5, borderRadius: 3, fontWeight: 800 }}>
+          <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ px: 5, py: 1.5, borderRadius: 3, fontWeight: 'bold' }}>
             {editingId ? 'Save Changes' : 'Add to Menu'}
           </Button>
         </DialogActions>

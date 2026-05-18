@@ -109,7 +109,9 @@ router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, r
             category: category || menuItem.category
         };
 
-        if (req.file && req.file.buffer) {
+        if (req.body.removePhoto === 'true') {
+            updateFields.photoUrl = '';
+        } else if (req.file && req.file.buffer) {
             ensureUploadsDir();
             const filename = `${req.file.fieldname}-${Date.now()}${path.extname(req.file.originalname)}`;
             const filePath = path.join(persistentUploadsDir, filename);
