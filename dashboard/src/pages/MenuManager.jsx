@@ -134,10 +134,9 @@ const MenuManager = () => {
         Menu Collection
       </Typography>
 
-      {/* Search Bar */}
-      <Box sx={{ mb: 6 }}>
+      {/* Search Bar and Add Button */}
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 6 }}>
         <TextField
-          fullWidth
           placeholder="Search items by name or category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -156,7 +155,24 @@ const MenuManager = () => {
               fontSize: '18px'
             }
           }}
+          sx={{ flexGrow: 1 }}
         />
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          onClick={() => handleOpen()}
+          sx={{
+            px: 4,
+            borderRadius: 4,
+            fontSize: '16px',
+            fontWeight: 800,
+            whiteSpace: 'nowrap',
+            height: '64px'
+          }}
+        >
+          Add New Item
+        </Button>
       </Box>
 
       {/* flat Simplified Table Container */}
@@ -252,18 +268,7 @@ const MenuManager = () => {
         </Table>
       </TableContainer>
 
-      {/* Button to Create Menu Item */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          onClick={() => handleOpen()}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
-        >
-          Add New Item
-        </Button>
-      </Box>
+
 
       {/* Create/Edit Dialog */}
       <Dialog

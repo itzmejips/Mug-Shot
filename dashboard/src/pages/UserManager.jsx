@@ -97,9 +97,22 @@ const UserManager = () => {
   return (
     <Box sx={{ width: '100%', maxWidth: '1200px', mx: 'auto', px: 2 }}>
       {/* Centered Title */}
-      <Typography variant="h2" align="center" sx={{ fontWeight: 900, color: 'text.primary', mb: 8, mt: 4, letterSpacing: '-1px' }}>
+      <Typography variant="h2" align="center" sx={{ fontWeight: 900, color: 'text.primary', mb: 4, mt: 4, letterSpacing: '-1px' }}>
         Users List
       </Typography>
+
+      {/* Add User Action above Table */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          onClick={handleOpen}
+          sx={{ py: 1.5, px: 4, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
+        >
+          Add User
+        </Button>
+      </Box>
 
       {/* Simplified, Clean Table Container */}
       <TableContainer component={Box} sx={{ bgcolor: 'transparent', boxShadow: 'none', overflow: 'hidden', mb: 6 }}>
@@ -176,18 +189,7 @@ const UserManager = () => {
         </Table>
       </TableContainer>
 
-      {/* Button to Create Admin - simple and bottom-aligned or cleanly styled */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 8 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Add />}
-          onClick={handleOpen}
-          sx={{ py: 1.8, px: 5, borderRadius: 3, fontSize: '16px', fontWeight: 800 }}
-        >
-          Add User
-        </Button>
-      </Box>
+
 
       {/* Dialog for Create/Edit */}
       <Dialog
