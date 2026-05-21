@@ -35,6 +35,12 @@ app.get('/', (req, res) => {
     res.send('Mug Shot Cafe API is running...');
 });
 
+// Global error handling middleware
+app.use((err, req, res, next) => {
+    console.error('API Error:', err.message);
+    res.status(err.status || 500).json({ message: err.message || 'Server Error' });
+});
+
 // Remove your old app.listen() and replace it with this:
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 1337;

@@ -121,6 +121,8 @@ const MenuManager = () => {
       handleClose();
     } catch (error) {
       console.error('Error saving item', error);
+      const serverMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An unexpected error occurred';
+      alert(`Error saving menu item: ${serverMessage}`);
     }
   };
 

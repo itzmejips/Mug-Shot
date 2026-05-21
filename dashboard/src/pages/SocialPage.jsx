@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Container, Typography, Stack, Card, Button } from '@mui/material';
-import { Facebook } from '@mui/icons-material';
+import { Facebook, Phone, Mail } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
@@ -14,8 +14,34 @@ const SocialPage = () => {
       name: 'Facebook',
       handle: '@MugShotCafe',
       icon: <Facebook sx={{ fontSize: 40 }} />,
-      description: 'Official Facebook Page.',
-      link: 'https://www.facebook.com/profile.php?id=61555738840293'
+      description: 'Official Facebook Page. Follow us for updates, daily specials, and community stories.',
+      link: 'https://www.facebook.com/profile.php?id=61555738840293',
+      buttonText: 'FOLLOW PAGE',
+      color: '#1877F2',
+      bgLight: 'rgba(24, 119, 242, 0.08)',
+      shadow: 'rgba(24, 119, 242, 0.25)'
+    },
+    {
+      name: 'Phone',
+      handle: '0976 469 2606',
+      icon: <Phone sx={{ fontSize: 40 }} />,
+      description: 'Call or message us directly. Available for inquiries, delivery reservations, and booking events.',
+      link: 'tel:09764692606',
+      buttonText: 'CALL NOW',
+      color: '#2E7D32',
+      bgLight: 'rgba(46, 125, 50, 0.08)',
+      shadow: 'rgba(46, 125, 50, 0.25)'
+    },
+    {
+      name: 'Email',
+      handle: 'bryll.business@gmail.com',
+      icon: <Mail sx={{ fontSize: 40 }} />,
+      description: 'Reach out to us via email. Send us a message for business proposals, feedback, and partnerships.',
+      link: 'mailto:bryll.business@gmail.com',
+      buttonText: 'SEND EMAIL',
+      color: '#D32F2F',
+      bgLight: 'rgba(211, 47, 47, 0.08)',
+      shadow: 'rgba(211, 47, 47, 0.25)'
     }
   ];
 
@@ -44,7 +70,7 @@ const SocialPage = () => {
             </MotionBox>
           </Box>
 
-          {/* Premium Platform Card - Original Branding */}
+          {/* Premium Platform Cards */}
           <Box className="card-wrapper">
             {socialPlatforms.map((platform) => (
               <MotionBox
@@ -53,6 +79,11 @@ const SocialPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
                 sx={{ width: '100%', maxWidth: '900px' }}
+                style={{
+                  '--platform-color': platform.color,
+                  '--platform-bg-light': platform.bgLight,
+                  '--platform-shadow': platform.shadow,
+                }}
               >
                 <Card className="platform-card">
                   <Box className="platform-avatar">
@@ -68,10 +99,10 @@ const SocialPage = () => {
                   <Button
                     variant="contained"
                     href={platform.link}
-                    target="_blank"
+                    target={platform.link.startsWith('http') ? '_blank' : undefined}
                     className="follow-button"
                   >
-                    FOLLOW PAGE
+                    {platform.buttonText}
                   </Button>
                 </Card>
               </MotionBox>

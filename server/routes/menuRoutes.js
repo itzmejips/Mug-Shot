@@ -32,8 +32,11 @@ const uploadImage = async (file) => {
     if (!file || !file.buffer) return '';
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
                                    process.env.CLOUDINARY_API_KEY && 
-                                   process.env.CLOUDINARY_API_SECRET;
+                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
+                                   process.env.CLOUDINARY_API_SECRET &&
+                                   process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
 
     if (isCloudinaryConfigured) {
         console.log('Uploading image to Cloudinary...');
@@ -64,8 +67,11 @@ const deleteImage = async (photoUrl) => {
     if (!photoUrl) return;
 
     const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
                                    process.env.CLOUDINARY_API_KEY && 
-                                   process.env.CLOUDINARY_API_SECRET;
+                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
+                                   process.env.CLOUDINARY_API_SECRET &&
+                                   process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
 
     if (isCloudinaryConfigured && photoUrl.includes('res.cloudinary.com')) {
         try {
