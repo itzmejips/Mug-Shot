@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// @route   POST /api/auth/login
-// @desc    Auth user & get credentials
-// @access  Public
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
