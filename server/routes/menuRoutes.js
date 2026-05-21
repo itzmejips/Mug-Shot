@@ -31,12 +31,12 @@ const ensureUploadsDir = () => {
 const uploadImage = async (file) => {
     if (!file || !file.buffer) return '';
 
-    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
-                                   process.env.CLOUDINARY_API_KEY && 
-                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
-                                   process.env.CLOUDINARY_API_SECRET &&
-                                   process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
+    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
+        process.env.CLOUDINARY_API_SECRET &&
+        process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
 
     if (isCloudinaryConfigured) {
         console.log('Uploading image to Cloudinary...');
@@ -131,7 +131,7 @@ router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
         console.log('POST /api/menu - Received request');
         console.log('Body:', req.body);
         console.log('File:', req.file ? { name: req.file.originalname, size: req.file.size } : 'No file');
-        
+
         const { name, description, price, category } = req.body;
         // Basic validation
         if (!name || typeof name !== 'string') {
@@ -172,7 +172,7 @@ router.put('/:id', uploadLimiter, upload.single('photo'), async (req, res) => {
 
         const { name, description, price, category } = req.body;
         if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) return res.status(400).json({ message: 'Price must be a non-negative number' });
-        
+
         // Find existing to use as fallback
         const menuItem = await MenuItem.findById(id);
         if (!menuItem) return res.status(404).json({ message: 'Menu item not found' });
