@@ -54,11 +54,19 @@ const uploadImage = async (file) => {
         return result.secure_url;
     } else {
         console.warn('Cloudinary environment variables missing. Falling back to local disk storage.');
-        ensureUploadsDir();
-        const filename = `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
-        const filePath = path.join(persistentUploadsDir, filename);
-        require('fs').writeFileSync(filePath, file.buffer);
-        return `/uploads/${filename}`;
+        try {
+            ensureUploadsDir();
+            const filename = `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
+            const filePath = path.join(persistentUploadsDir, filename);
+            require('fs').writeFileSync(filePath, file.buffer);
+            return `/uploads/${filename}`;
+        } catch (writeError) {
+            console.error('Failed to write file locally:', writeError.message);
+            if (writeError.code === 'EROFS' || writeError.message.includes('read-only') || writeError.message.includes('EROFS')) {
+                throw new Error('Cloudinary credentials are not configured in Vercel. Vercel utilizes a read-only filesystem, so images cannot be saved locally. Please configure your CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Environment Variables.');
+            }
+            throw writeError;
+        }
     }
 };
 
