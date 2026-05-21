@@ -117,7 +117,7 @@ function AdminLogin() {
             }}
           >
             <Typography component="h1" variant="h5" sx={{ fontWeight: "bold" }}>
-              Sign in
+              Login
             </Typography>
             <Box
               component="form"
@@ -167,7 +167,7 @@ function AdminLogin() {
                 disabled={loading}
                 sx={{ mt: 3, mb: 2, py: 1.2, fontWeight: "bold" }}
               >
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Logging In..." : "Login"}
               </Button>
             </Box>
           </Box>
