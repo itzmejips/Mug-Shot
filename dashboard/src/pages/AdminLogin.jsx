@@ -153,12 +153,12 @@ function AdminLogin() {
               }}
             />
 
-            <Typography 
-              component="h1" 
-              variant="h4" 
-              sx={{ 
-                fontWeight: 900, 
-                color: "#FDF5E6", 
+            <Typography
+              component="h1"
+              variant="h4"
+              sx={{
+                fontWeight: 900,
+                color: "#FDF5E6",
                 letterSpacing: "1px",
                 textTransform: "uppercase",
                 fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
@@ -167,11 +167,11 @@ function AdminLogin() {
             >
               Mug Shot
             </Typography>
-            <Typography 
-              variant="subtitle2" 
-              sx={{ 
-                color: "primary.main", 
-                fontWeight: 700, 
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "primary.main",
+                fontWeight: 700,
                 letterSpacing: "2px",
                 mb: 4,
                 textTransform: "uppercase"
@@ -290,10 +290,10 @@ function AdminLogin() {
                 <Alert
                   severity="error"
                   variant="filled"
-                  sx={{ 
-                    mt: 1, 
-                    mb: 2, 
-                    width: '100%', 
+                  sx={{
+                    mt: 1,
+                    mb: 2,
+                    width: '100%',
                     borderRadius: "12px",
                     bgcolor: "error.dark",
                     border: "1px solid rgba(255,255,255,0.1)",
@@ -309,10 +309,10 @@ function AdminLogin() {
                 fullWidth
                 variant="contained"
                 disabled={loading}
-                sx={{ 
-                  mt: 1, 
-                  mb: 2, 
-                  py: 1.5, 
+                sx={{
+                  mt: 1,
+                  mb: 2,
+                  py: 1.5,
                   borderRadius: "12px",
                   fontWeight: "bold",
                   fontSize: "1rem",
@@ -347,8 +347,8 @@ function AdminLogin() {
                 alignItems: "center",
                 gap: 1,
                 opacity: 0.75,
-                '&:hover': { 
-                  opacity: 1, 
+                '&:hover': {
+                  opacity: 1,
                   color: 'primary.main',
                   transform: "translateX(-2px)"
                 },

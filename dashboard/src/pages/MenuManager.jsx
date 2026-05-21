@@ -13,6 +13,7 @@ const MenuManager = () => {
   const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', photo: null, photoUrl: '', isPhotoRemoved: false });
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [deleteConfirm, setDeleteConfirm] = useState({ open: false, itemId: null });
   const showMessage = (msg, sev = 'success') => {
@@ -48,6 +49,7 @@ const MenuManager = () => {
   }, [navigate]);
 
   const handleOpen = (item = null) => {
+    setError('');
     if (item) {
       setFormData({ name: item.name, description: item.description, price: item.price, category: item.category, photo: null, photoUrl: item.photoUrl || '', isPhotoRemoved: false });
       setEditingId(item._id);
@@ -59,6 +61,7 @@ const MenuManager = () => {
   };
 
   const handleClose = () => {
+    setError('');
     setOpen(false);
   };
 
@@ -73,13 +76,37 @@ const MenuManager = () => {
       return;
     }
     // strip any minus signs to prevent negative values
-    const sanitized = raw.replace(/-/g, '');
+    let sanitized = raw.replace(/-/g, '');
+    
+    // Clamp the value strictly to between 0 and 9999
+    const parsed = parseFloat(sanitized);
+    if (!isNaN(parsed)) {
+      if (parsed > 9999) {
+        sanitized = '9999';
+      } else if (parsed < 0) {
+        sanitized = '0';
+      }
+    }
     setFormData({ ...formData, price: sanitized });
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError("Only image files are allowed.");
+        e.target.value = null; // Clear the input
+        return;
+      }
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image size must be under 5MB.");
+        e.target.value = null; // Clear the input
+        return;
+      }
+      setError('');
+
       // revoke previous object URL if it was created for a file
       if (formData.photo && formData.photoUrl) {
         try { URL.revokeObjectURL(formData.photoUrl); } catch (err) { /* ignore */ }
@@ -98,6 +125,28 @@ const MenuManager = () => {
   };
 
   const handleSubmit = async () => {
+    setError('');
+    const name = formData.name.trim();
+    const description = formData.description.trim();
+    const price = formData.price;
+    const category = formData.category;
+
+    if (!name) {
+      setError("Item name is required.");
+      return;
+    }
+
+    const priceNum = parseFloat(price);
+    if (price === '' || isNaN(priceNum) || priceNum < 0 || priceNum > 9999) {
+      setError("Price must be a number between ₱0 and ₱9999.");
+      return;
+    }
+
+    if (!category) {
+      setError("Please select a category.");
+      return;
+    }
+
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -105,10 +154,10 @@ const MenuManager = () => {
     };
 
     const data = new FormData();
-    data.append('name', formData.name);
-    data.append('description', formData.description);
-    data.append('price', formData.price);
-    data.append('category', formData.category);
+    data.append('name', name);
+    data.append('description', description);
+    data.append('price', price);
+    data.append('category', category);
     if (formData.photo) {
       data.append('photo', formData.photo);
     }
@@ -129,7 +178,7 @@ const MenuManager = () => {
     } catch (error) {
       console.error('Error saving item', error);
       const serverMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An unexpected error occurred';
-      showMessage(`Error saving menu item: ${serverMessage}`, "error");
+      setError(`Error saving menu item: ${serverMessage}`);
     }
   };
 
@@ -330,6 +379,22 @@ const MenuManager = () => {
           <IconButton onClick={handleClose} sx={{ color: 'text.secondary' }}><Close /></IconButton>
         </DialogTitle>
         <DialogContent>
+          {error && (
+            <Alert
+              severity="error"
+              variant="filled"
+              sx={{
+                mb: 3,
+                mt: 1,
+                borderRadius: "12px",
+                bgcolor: "error.dark",
+                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+              }}
+            >
+              {error}
+            </Alert>
+          )}
           <Stack spacing={3.5} sx={{ mt: 2 }}>
             <TextField fullWidth label="Name" name="name" value={formData.name} onChange={handleChange} required variant="outlined" />
             <TextField fullWidth label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={2} />
@@ -338,7 +403,7 @@ const MenuManager = () => {
               label="Price (PHP)"
               name="price"
               type="number"
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 0, max: 9999 }}
               value={formData.price}
               onChange={handlePriceChange}
               onKeyDown={(e) => {

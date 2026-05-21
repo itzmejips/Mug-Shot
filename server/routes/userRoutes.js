@@ -20,19 +20,38 @@ router.get('/', async (req, res) => {
 // @access  Public (simplified without JWT)
 router.post('/', async (req, res) => {
     const { name, email, password } = req.body;
-    
+
     try {
-        if (!email || !name || !password) {
-            return res.status(400).json({ message: 'Name, email, and password are required' });
+        if (!name || !name.trim()) {
+            return res.status(400).json({ message: 'Name is required' });
+        }
+        const nameRegex = /^[A-Za-z\s-]+$/;
+        if (!nameRegex.test(name.trim())) {
+            return res.status(400).json({ message: 'Name must only contain alphabets, spaces, and hyphens (no numbers).' });
         }
 
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+        if (!email || !email.trim()) {
+            return res.status(400).json({ message: 'Email is required' });
         }
-        
-        // Based on studied code: new User() and save()
-        const newUser = new User({ name, email, password });
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            return res.status(400).json({ message: 'Invalid email address format' });
+        }
+
+        if (!password || password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+        }
+
+        const userExists = await User.findOne({ email: email.trim() });
+        if (userExists) {
+            return res.status(400).json({ message: 'User already exists with this email' });
+        }
+
+        const newUser = new User({
+            name: name.trim(),
+            email: email.trim(),
+            password
+        });
         await newUser.save();
 
         res.status(201).json({
@@ -75,22 +94,55 @@ router.delete('/:id', async (req, res) => {
 // @access  Public (simplified without JWT)
 router.put('/:id', async (req, res) => {
     const { name, email, password } = req.body;
-    
+
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
             return res.status(400).json({ message: 'User ID is required and must be valid' });
         }
 
-        const updateFields = { name, email };
-        if (password) {
+        if (name !== undefined) {
+            if (!name.trim()) {
+                return res.status(400).json({ message: 'Name cannot be empty' });
+            }
+            const nameRegex = /^[A-Za-z\s-]+$/;
+            if (!nameRegex.test(name.trim())) {
+                return res.status(400).json({ message: 'Name must only contain alphabets, spaces, and hyphens (no numbers).' });
+            }
+        }
+
+        if (email !== undefined) {
+            if (!email.trim()) {
+                return res.status(400).json({ message: 'Email cannot be empty' });
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.trim())) {
+                return res.status(400).json({ message: 'Invalid email address format' });
+            }
+            // Check if email already exists for another user
+            const emailExists = await User.findOne({ email: email.trim(), _id: { $ne: id } });
+            if (emailExists) {
+                return res.status(400).json({ message: 'Email is already in use by another user' });
+            }
+        }
+
+        if (password !== undefined && password !== '') {
+            if (password.length < 6) {
+                return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+            }
+        }
+
+        const updateFields = {};
+        if (name !== undefined) updateFields.name = name.trim();
+        if (email !== undefined) updateFields.email = email.trim();
+        if (password !== undefined && password !== '') {
             updateFields.password = password;
         }
 
         // Based on studied code: findByIdAndUpdate() with returnDocument: 'after'
         const updatedUser = await User.findByIdAndUpdate(
-            id, 
-            updateFields, 
+            id,
+            updateFields,
             { returnDocument: 'after' }
         );
 

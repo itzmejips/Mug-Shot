@@ -16,6 +16,17 @@ cloudinary.config({
 // rate limit: 10 requests per minute per IP for upload routes
 const uploadLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
 
+// Wrap multer upload to handle errors gracefully
+const handleUpload = (req, res, next) => {
+    upload.single('photo')(req, res, (err) => {
+        if (err) {
+            console.warn('Multer upload error:', err.message);
+            return res.status(400).json({ message: err.message });
+        }
+        next();
+    });
+};
+
 // Persistent uploads directory (in server root for local dev fallback)
 const persistentUploadsDir = path.join(__dirname, '..', 'uploads');
 const ensureUploadsDir = () => {
@@ -117,30 +128,36 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
+router.post('/', uploadLimiter, handleUpload, async (req, res) => {
     try {
         console.log('POST /api/menu - Received request');
         console.log('Body:', req.body);
         console.log('File:', req.file ? { name: req.file.originalname, size: req.file.size } : 'No file');
 
         const { name, description, price, category } = req.body;
-        if (!name || typeof name !== 'string') {
+        if (!name || typeof name !== 'string' || !name.trim()) {
             console.warn('Validation failed: Name is required');
             return res.status(400).json({ message: 'Name is required' });
         }
         const priceNum = parseFloat(price);
-        if (isNaN(priceNum) || priceNum < 0) {
+        if (isNaN(priceNum) || priceNum < 0 || priceNum > 9999) {
             console.warn('Validation failed: Invalid price');
-            return res.status(400).json({ message: 'Price must be a non-negative number' });
+            return res.status(400).json({ message: 'Price must be a number between 0 and 9999' });
         }
-        if (!category || typeof category !== 'string') {
+        if (!category || typeof category !== 'string' || !category.trim()) {
             console.warn('Validation failed: Category is required');
             return res.status(400).json({ message: 'Category is required' });
         }
 
         const photoUrl = await uploadImage(req.file);
 
-        const menuItem = new MenuItem({ name, description, price, category, photoUrl });
+        const menuItem = new MenuItem({
+            name: name.trim(),
+            description: description ? description.trim() : '',
+            price: priceNum,
+            category: category.trim(),
+            photoUrl
+        });
         const createdItem = await menuItem.save();
         console.log('Menu item created:', createdItem._id);
         res.status(201).json(createdItem);
@@ -150,7 +167,7 @@ router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
     }
 });
 
-router.put('/:id', uploadLimiter, upload.single('photo'), async (req, res) => {
+router.put('/:id', uploadLimiter, handleUpload, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
@@ -158,17 +175,31 @@ router.put('/:id', uploadLimiter, upload.single('photo'), async (req, res) => {
         }
 
         const { name, description, price, category } = req.body;
-        if (price && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) return res.status(400).json({ message: 'Price must be a non-negative number' });
+
+        if (name !== undefined && (!name || !name.trim())) {
+            return res.status(400).json({ message: 'Name cannot be empty' });
+        }
+
+        if (price !== undefined) {
+            const priceNum = parseFloat(price);
+            if (isNaN(priceNum) || priceNum < 0 || priceNum > 9999) {
+                return res.status(400).json({ message: 'Price must be a number between 0 and 9999' });
+            }
+        }
+
+        if (category !== undefined && (!category || !category.trim())) {
+            return res.status(400).json({ message: 'Category cannot be empty' });
+        }
 
         // Find existing to use as fallback
         const menuItem = await MenuItem.findById(id);
         if (!menuItem) return res.status(404).json({ message: 'Menu item not found' });
 
         const updateFields = {
-            name: name || menuItem.name,
-            description: description || menuItem.description,
-            price: price || menuItem.price,
-            category: category || menuItem.category
+            name: name !== undefined ? name.trim() : menuItem.name,
+            description: description !== undefined ? description.trim() : menuItem.description,
+            price: price !== undefined ? parseFloat(price) : menuItem.price,
+            category: category !== undefined ? category.trim() : menuItem.category
         };
 
         if (req.body.removePhoto === 'true') {
