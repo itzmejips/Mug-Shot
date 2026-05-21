@@ -170,7 +170,7 @@
 .follow-button:hover {
   background-color: white !important;
   color: var(--platform-color, #1877F2) !important;
-  transform: translateY(-2px) !important;
+  transform: none !important;
 }
 
 .gallery-container {

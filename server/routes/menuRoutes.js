@@ -70,21 +70,18 @@ const uploadImage = async (file) => {
     }
 };
 
-// Helper function to delete image from Cloudinary or local storage
 const deleteImage = async (photoUrl) => {
     if (!photoUrl) return;
 
-    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                                   process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
-                                   process.env.CLOUDINARY_API_KEY && 
-                                   process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
-                                   process.env.CLOUDINARY_API_SECRET &&
-                                   process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
+    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_CLOUD_NAME !== 'your_cloud_name' &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_KEY !== 'your_api_key' &&
+        process.env.CLOUDINARY_API_SECRET &&
+        process.env.CLOUDINARY_API_SECRET !== 'your_api_secret';
 
     if (isCloudinaryConfigured && photoUrl.includes('res.cloudinary.com')) {
         try {
-            // Extract public_id from Cloudinary URL
-            // e.g., https://res.cloudinary.com/cloud_name/image/upload/v1234567890/mugshot_menu/photo-1779005787816.png
             const parts = photoUrl.split('/image/upload/');
             if (parts.length > 1) {
                 const relativePath = parts[1].replace(/^v\d+\//, ''); // remove version number
@@ -110,9 +107,6 @@ const deleteImage = async (photoUrl) => {
     }
 };
 
-// @route   GET /api/menu
-// @desc    Get all menu items
-// @access  Public
 router.get('/', async (req, res) => {
     try {
         const items = await MenuItem.find({});
@@ -123,9 +117,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// @route   POST /api/menu
-// @desc    Create a menu item
-// @access  Public (simplified without JWT)
 router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
     try {
         console.log('POST /api/menu - Received request');
@@ -133,7 +124,6 @@ router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
         console.log('File:', req.file ? { name: req.file.originalname, size: req.file.size } : 'No file');
 
         const { name, description, price, category } = req.body;
-        // Basic validation
         if (!name || typeof name !== 'string') {
             console.warn('Validation failed: Name is required');
             return res.status(400).json({ message: 'Name is required' });
@@ -160,9 +150,6 @@ router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
     }
 });
 
-// @route   PUT /api/menu/:id
-// @desc    Update a menu item
-// @access  Public (simplified without JWT)
 router.put('/:id', uploadLimiter, upload.single('photo'), async (req, res) => {
     try {
         const { id } = req.params;

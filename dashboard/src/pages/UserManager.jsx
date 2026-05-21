@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
+import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Snackbar, Alert } from '@mui/material';
 import { Add, Close } from '@mui/icons-material';
 import axios from 'axios';
 
@@ -12,6 +12,11 @@ const UserManager = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ open: false, userId: null });
+  const showMessage = (msg, sev = 'success') => {
+    setSnackbar({ open: true, message: msg, severity: sev });
+  };
 
   const fetchUsers = async () => {
     try {
@@ -64,9 +69,11 @@ const UserManager = () => {
       if (editingId) {
         // Update user
         await axios.put(`${API_URL}/api/users/${editingId}`, payload);
+        showMessage("User updated successfully!", "success");
       } else {
         // Create user
         await axios.post(`${API_URL}/api/users`, payload);
+        showMessage("User created successfully!", "success");
       }
 
       fetchUsers();
@@ -76,22 +83,26 @@ const UserManager = () => {
     }
   };
 
-  const handleDeleteUser = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  const handleDeleteClick = (id) => {
+    setDeleteConfirm({ open: true, userId: id });
+  };
 
-    if (!confirmDelete) {
-      alert("Delete Cancelled!");
-      return;
-    }
-
+  const handleDeleteConfirm = async () => {
+    const id = deleteConfirm.userId;
+    setDeleteConfirm({ open: false, userId: null });
     try {
       await axios.delete(`${API_URL}/api/users/${id}`);
-      alert("Deleted successfully!");
+      showMessage("Deleted successfully!", "success");
       fetchUsers();
     } catch (err) {
       console.error('Error deleting user', err);
-      alert("Delete failed!");
+      showMessage("Delete failed!", "error");
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ open: false, userId: null });
+    showMessage("Delete Cancelled!", "info");
   };
 
   return (
@@ -152,7 +163,8 @@ const UserManager = () => {
                       textTransform: 'uppercase',
                       '&:hover': {
                         borderColor: "#42a5f5",
-                        bgcolor: "transparent"
+                        bgcolor: "transparent",
+                        boxShadow: '0 4px 15px rgba(66, 165, 245, 0.3)',
                       }
                     }}
                   >
@@ -171,13 +183,14 @@ const UserManager = () => {
                       textTransform: 'uppercase',
                       '&:hover': {
                         borderColor: "#ff5252",
-                        bgcolor: "transparent"
+                        bgcolor: "transparent",
+                        boxShadow: '0 4px 15px rgba(255, 82, 82, 0.3)',
                       }
                     }}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      handleDeleteUser(user._id);
+                      handleDeleteClick(user._id);
                     }}
                   >
                     DELETE
@@ -265,6 +278,58 @@ const UserManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirm.open}
+        onClose={handleDeleteCancel}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 3,
+              p: 2,
+              backgroundImage: 'none',
+              bgcolor: 'background.paper',
+              border: '1px solid rgba(211, 47, 47, 0.12)'
+            }
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1, fontWeight: 'bold' }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: 'text.secondary', fontSize: '16px' }}>
+            Are you sure you want to delete this user? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'flex-end', gap: 1.5 }}>
+          <Button onClick={handleDeleteCancel} variant="text" sx={{ fontWeight: 700, color: 'text.secondary' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} variant="contained" color="error" sx={{ px: 4, borderRadius: 3, fontWeight: 'bold' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%', borderRadius: 2 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

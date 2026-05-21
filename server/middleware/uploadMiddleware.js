@@ -7,14 +7,18 @@ const path = require('path');
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-    const filetypes = /jpg|jpeg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+    if (!file) {
+        return cb(null, true);
+    }
 
-    if (extname && mimetype) {
+    const filetypes = /jpg|jpeg|png|webp|gif|heic|heif/i;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = file.mimetype && file.mimetype.startsWith('image/');
+
+    if (extname || mimetype) {
         cb(null, true);
     } else {
-        cb(new Error('Images only!'));
+        cb(new Error('Images only! Allowed formats: JPG, JPEG, PNG, WEBP, GIF, HEIC.'));
     }
 };
 

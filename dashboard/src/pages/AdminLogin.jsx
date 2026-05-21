@@ -9,6 +9,7 @@ import {
   Typography,
   Container,
   CssBaseline,
+  Alert,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
@@ -150,13 +151,13 @@ function AdminLogin() {
               />
 
               {error && (
-                <Typography
-                  color="error"
-                  variant="body2"
-                  sx={{ mt: 1, textAlign: "center" }}
+                <Alert
+                  severity="error"
+                  variant="filled"
+                  sx={{ mt: 2, width: '100%', borderRadius: 2 }}
                 >
                   {error}
-                </Typography>
+                </Alert>
               )}
 
               <Button

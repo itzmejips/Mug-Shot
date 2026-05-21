@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl, Stack, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow, Avatar } from '@mui/material';
+import { Box, Typography, Button, TextField, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl, Stack, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow, Avatar, Snackbar, Alert } from '@mui/material';
 import { Add, Search, CloudUpload, LocalCafe, Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,6 +13,11 @@ const MenuManager = () => {
   const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', photo: null, photoUrl: '', isPhotoRemoved: false });
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ open: false, itemId: null });
+  const showMessage = (msg, sev = 'success') => {
+    setSnackbar({ open: true, message: msg, severity: sev });
+  };
   const navigate = useNavigate();
 
   const categories = ['Rice Meals', 'Pasta and Appetizers', 'Waffle and Sweets', 'Signature Coffee', 'Coffee Lattes', 'Specialty Refreshments'];
@@ -114,34 +119,40 @@ const MenuManager = () => {
     try {
       if (editingId) {
         await axios.put(`${API_URL}/api/menu/${editingId}`, data, config);
+        showMessage("Menu item updated successfully!", "success");
       } else {
         await axios.post(`${API_URL}/api/menu`, data, config);
+        showMessage("Menu item added successfully!", "success");
       }
       fetchItems();
       handleClose();
     } catch (error) {
       console.error('Error saving item', error);
       const serverMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'An unexpected error occurred';
-      alert(`Error saving menu item: ${serverMessage}`);
+      showMessage(`Error saving menu item: ${serverMessage}`, "error");
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+  const handleDeleteClick = (id) => {
+    setDeleteConfirm({ open: true, itemId: id });
+  };
 
-    if (!confirmDelete) {
-      alert("Delete Cancelled!");
-      return;
-    }
-
+  const handleDeleteConfirm = async () => {
+    const id = deleteConfirm.itemId;
+    setDeleteConfirm({ open: false, itemId: null });
     try {
       await axios.delete(`${API_URL}/api/menu/${id}`);
-      alert("Deleted successfully!");
+      showMessage("Deleted successfully!", "success");
       fetchItems();
     } catch (error) {
       console.error('Error deleting item', error);
-      alert("Delete failed!");
+      showMessage("Delete failed!", "error");
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ open: false, itemId: null });
+    showMessage("Delete Cancelled!", "info");
   };
 
   const filteredItems = items.filter(item =>
@@ -253,7 +264,8 @@ const MenuManager = () => {
                       textTransform: 'uppercase',
                       '&:hover': {
                         borderColor: "#42a5f5",
-                        bgcolor: "transparent"
+                        bgcolor: "transparent",
+                        boxShadow: '0 4px 15px rgba(66, 165, 245, 0.3)',
                       }
                     }}
                   >
@@ -272,13 +284,14 @@ const MenuManager = () => {
                       textTransform: 'uppercase',
                       '&:hover': {
                         borderColor: "#ff5252",
-                        bgcolor: "transparent"
+                        bgcolor: "transparent",
+                        boxShadow: '0 4px 15px rgba(255, 82, 82, 0.3)',
                       }
                     }}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      handleDelete(item._id);
+                      handleDeleteClick(item._id);
                     }}
                   >
                     DELETE
@@ -402,6 +415,58 @@ const MenuManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirm.open}
+        onClose={handleDeleteCancel}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 3,
+              p: 2,
+              backgroundImage: 'none',
+              bgcolor: 'background.paper',
+              border: '1px solid rgba(211, 47, 47, 0.12)'
+            }
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1, fontWeight: 'bold' }}>
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: 'text.secondary', fontSize: '16px' }}>
+            Are you sure you want to delete this item? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'flex-end', gap: 1.5 }}>
+          <Button onClick={handleDeleteCancel} variant="text" sx={{ fontWeight: 700, color: 'text.secondary' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} variant="contained" color="error" sx={{ px: 4, borderRadius: 3, fontWeight: 'bold' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%', borderRadius: 2 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
