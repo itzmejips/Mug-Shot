@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl, Stack, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
+import { Box, Typography, Button, TextField, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, InputLabel, FormControl, Stack, InputAdornment, Table, TableBody, TableCell, TableContainer, TableRow, Avatar } from '@mui/material';
 import { Add, Search, CloudUpload, LocalCafe, Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1337';
 const API_URL = rawApiUrl.replace(/\/$/, "");
 
 const MenuManager = () => {
@@ -18,9 +18,7 @@ const MenuManager = () => {
   const categories = ['Rice Meals', 'Pasta and Appetizers', 'Waffle and Sweets', 'Signature Coffee', 'Coffee Lattes', 'Specialty Refreshments'];
   const fetchItems = async () => {
     try {
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
-      const headers = adminInfo && adminInfo.token ? { Authorization: `Bearer ${adminInfo.token}` } : {};
-      const { data } = await axios.get(`${API_URL}/api/menu`, { headers });
+      const { data } = await axios.get(`${API_URL}/api/menu`);
       setItems(data);
     } catch (error) {
       console.error('Error fetching menu', error);
@@ -30,15 +28,13 @@ const MenuManager = () => {
   useEffect(() => {
     const adminInfoRaw = localStorage.getItem('adminInfo');
     const adminInfo = adminInfoRaw ? JSON.parse(adminInfoRaw) : null;
-    if (!adminInfo || !adminInfo.token) {
-      // Ensure a fresh login so the token is available for protected actions
+    if (!adminInfo) {
       navigate('/login');
       return;
     }
     void (async () => {
       try {
-        const headers = { Authorization: `Bearer ${adminInfo.token}` };
-        const { data } = await axios.get(`${API_URL}/api/menu`, { headers });
+        const { data } = await axios.get(`${API_URL}/api/menu`);
         setItems(data);
       } catch (error) {
         console.error('Error fetching menu', error);
@@ -65,13 +61,34 @@ const MenuManager = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePriceChange = (e) => {
+    const raw = e.target.value;
+    if (raw === '') {
+      setFormData({ ...formData, price: '' });
+      return;
+    }
+    // strip any minus signs to prevent negative values
+    const sanitized = raw.replace(/-/g, '');
+    setFormData({ ...formData, price: sanitized });
+  };
+
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      setFormData({ ...formData, photo: e.target.files[0], isPhotoRemoved: false });
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      // revoke previous object URL if it was created for a file
+      if (formData.photo && formData.photoUrl) {
+        try { URL.revokeObjectURL(formData.photoUrl); } catch (err) { /* ignore */ }
+      }
+      const preview = URL.createObjectURL(file);
+      setFormData({ ...formData, photo: file, photoUrl: preview, isPhotoRemoved: false });
     }
   };
 
   const handleRemovePhoto = () => {
+    // revoke object URL if present
+    if (formData.photo && formData.photoUrl) {
+      try { URL.revokeObjectURL(formData.photoUrl); } catch (err) { /* ignore */ }
+    }
     setFormData({ ...formData, photo: null, photoUrl: '', isPhotoRemoved: true });
   };
 
@@ -96,12 +113,8 @@ const MenuManager = () => {
 
     try {
       if (editingId) {
-        const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
-        if (adminInfo && adminInfo.token) config.headers = { ...config.headers, Authorization: `Bearer ${adminInfo.token}` };
         await axios.put(`${API_URL}/api/menu/${editingId}`, data, config);
       } else {
-        const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
-        if (adminInfo && adminInfo.token) config.headers = { ...config.headers, Authorization: `Bearer ${adminInfo.token}` };
         await axios.post(`${API_URL}/api/menu`, data, config);
       }
       fetchItems();
@@ -120,9 +133,7 @@ const MenuManager = () => {
     }
 
     try {
-      const adminInfo = JSON.parse(localStorage.getItem('adminInfo')) || null;
-      const headers = adminInfo && adminInfo.token ? { Authorization: `Bearer ${adminInfo.token}` } : {};
-      await axios.delete(`${API_URL}/api/menu/${id}`, { headers });
+      await axios.delete(`${API_URL}/api/menu/${id}`);
       alert("Deleted successfully!");
       fetchItems();
     } catch (error) {
@@ -312,11 +323,15 @@ const MenuManager = () => {
               label="Price (PHP)"
               name="price"
               type="number"
+              inputProps={{ min: 0 }}
               value={formData.price}
-              onChange={handleChange}
+              onChange={handlePriceChange}
+              onKeyDown={(e) => {
+                // Prevent entering minus, e (exponent) and plus signs
+                if (['-', 'e', 'E', '+'].includes(e.key)) e.preventDefault();
+              }}
               required
               slotProps={{
-                htmlInput: { min: 0 },
                 input: {
                   startAdornment: <InputAdornment position="start" sx={{ color: 'primary.main', fontWeight: 700 }}>₱</InputAdornment>
                 }
@@ -330,35 +345,45 @@ const MenuManager = () => {
             </FormControl>
             <Box>
               <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700, color: 'text.secondary' }}>Image</Typography>
-              <Stack direction="row" spacing={2}>
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ justifyContent: 'center', width: '100%' }}>
                 <Button
                   component="label"
                   variant="outlined"
-                  fullWidth
-                  startIcon={<CloudUpload />}
+                  startIcon={
+                    formData.photoUrl ? (
+                      <Avatar src={formData.photoUrl} sx={{ width: 36, height: 36 }} />
+                    ) : (
+                      <CloudUpload />
+                    )
+                  }
                   sx={{
-                    py: 1.5,
+                    py: 1.25,
+                    px: 3,
+                    minWidth: 220,
                     borderRadius: 3,
                     borderColor: 'rgba(211, 47, 47, 0.3)',
                     color: 'text.secondary',
                     fontWeight: 'bold',
                     textTransform: 'uppercase',
+                    display: 'flex',
+                    justifyContent: 'center',
                     '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(211, 47, 47, 0.05)' }
                   }}
                 >
-                  {formData.photo ? formData.photo.name : (formData.photoUrl ? 'Change Image' : 'Select Image')}
+                  {formData.photoUrl ? 'Change Image' : 'Select Image'}
                   <input type="file" hidden accept="image/*" onChange={handleFileChange} />
                 </Button>
+
                 <Button
                   variant="outlined"
                   color="error"
-                  fullWidth
                   disabled={!formData.photo && !formData.photoUrl}
                   onClick={handleRemovePhoto}
                   sx={{
+                    minWidth: 140,
                     borderRadius: 3,
                     fontWeight: 'bold',
-                    py: 1.5,
+                    py: 1.25,
                     textTransform: 'uppercase'
                   }}
                 >

@@ -3,7 +3,6 @@ const router = express.Router();
 const MenuItem = require('../models/MenuItem');
 const upload = require('../middleware/uploadMiddleware');
 const rateLimit = require('express-rate-limit');
-const { protect } = require('../middleware/authMiddleware');
 
 // rate limit: 10 requests per minute per IP for upload routes
 const uploadLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
@@ -41,7 +40,7 @@ router.get('/', async (req, res) => {
 // @route   POST /api/menu
 // @desc    Create a menu item
 // @access  Public (simplified without JWT)
-router.post('/', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
+router.post('/', uploadLimiter, upload.single('photo'), async (req, res) => {
     try {
         console.log('POST /api/menu - Received request');
         console.log('User:', req.user ? req.user._id : 'No user');
@@ -88,7 +87,7 @@ router.post('/', uploadLimiter, protect, upload.single('photo'), async (req, res
 // @route   PUT /api/menu/:id
 // @desc    Update a menu item
 // @access  Public (simplified without JWT)
-router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, res) => {
+router.put('/:id', uploadLimiter, upload.single('photo'), async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {
@@ -130,7 +129,7 @@ router.put('/:id', uploadLimiter, protect, upload.single('photo'), async (req, r
 // @route   DELETE /api/menu/:id
 // @desc    Delete a menu item
 // @access  Public (simplified without JWT)
-router.delete('/:id', uploadLimiter, protect, async (req, res) => {
+router.delete('/:id', uploadLimiter, async (req, res) => {
     try {
         const { id } = req.params;
         if (!id || id === 'undefined') {

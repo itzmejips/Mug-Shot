@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 
 // Remove your old app.listen() and replace it with this:
 if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 1337;
     app.listen(PORT, () => {
         console.log(`Server running locally on port ${PORT}`);
     });

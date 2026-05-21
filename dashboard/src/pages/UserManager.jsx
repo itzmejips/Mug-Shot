@@ -3,7 +3,7 @@ import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, Di
 import { Add, Close } from '@mui/icons-material';
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1337';
 const API_URL = rawApiUrl.replace(/\/$/, "");
 
 const UserManager = () => {

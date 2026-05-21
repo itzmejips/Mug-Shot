@@ -54,12 +54,12 @@ const Navbar = (props) => {
               alignItems: 'center',
               gap: { xs: 1.5, md: 3 },
               textDecoration: 'none',
-              position: 'absolute',
-              left: '50%',
-              transform: 'translateX(-50%)',
+              position: { xs: 'static', md: 'absolute' },
+              left: { md: '50%' },
+              transform: { xs: 'none', md: 'translateX(-50%)' },
               zIndex: 15,
               transition: '0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              '&:hover': { transform: 'translateX(-50%) scale(1.05)' }
+              '&:hover': { transform: { xs: 'none', md: 'translateX(-50%) scale(1.05)' } }
             }}>
               <Typography variant="h6" sx={{
                 color: 'text.primary',
