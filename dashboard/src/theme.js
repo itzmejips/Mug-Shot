@@ -4,7 +4,7 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#D32F2F', // Deep Crimson - Highly Readable
+      main: '#D32F2F', // Deep Crimson
       light: '#E57373', // Muted Coral
       dark: '#B71C1C', // Rich Garnet
       contrastText: '#FFFFFF',
