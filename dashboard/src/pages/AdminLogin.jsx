@@ -22,7 +22,6 @@ import logoImg from '../assets/logo.jpg';
 import bgImg from '../assets/MugShot.jpeg';
 
 const MotionPaper = motion(Paper);
-const MotionBox = motion(Box);
 
 const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1337';
 const API_URL = rawApiUrl.replace(/\/$/, "");

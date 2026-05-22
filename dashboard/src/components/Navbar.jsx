@@ -1,11 +1,8 @@
-import React from 'react';
-import { AppBar, Toolbar, Container, Box, Typography, Button, IconButton, useScrollTrigger } from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Container, Box, Typography, Button, IconButton, useScrollTrigger, Drawer, List, ListItemButton, ListItemText, Divider } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import logo from '../assets/logo.jpg';
-
-const MotionBox = motion(Box);
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -29,6 +26,7 @@ function ElevationScroll(props) {
 
 const Navbar = (props) => {
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const leftItems = [
     { label: 'Home', path: '/' },
@@ -41,6 +39,11 @@ const Navbar = (props) => {
     { label: 'Social', path: '/social' },
     { label: 'Admin', path: '/login' },
   ];
+
+  const navItems = [...leftItems, ...rightItems];
+
+  const handleDrawerOpen = () => setMobileOpen(true);
+  const handleDrawerClose = () => setMobileOpen(false);
 
   return (
     <ElevationScroll {...props}>
@@ -186,7 +189,9 @@ const Navbar = (props) => {
 
               {/* Mobile Menu Icon */}
               <Box sx={{ display: { xs: 'flex', md: 'none' }, width: '100%', justifyContent: 'space-between', alignItems: 'center', px: 2 }}>
-                <IconButton sx={{ color: 'primary.main' }}><MenuIcon fontSize="large" /></IconButton>
+                <IconButton aria-label="open navigation menu" onClick={handleDrawerOpen} sx={{ color: 'primary.main' }}>
+                  <MenuIcon fontSize="large" />
+                </IconButton>
                 <Box sx={{ width: 60 }} />
               </Box>
 
@@ -194,6 +199,63 @@ const Navbar = (props) => {
 
           </Toolbar>
         </Container>
+
+        <Drawer
+          anchor="right"
+          open={mobileOpen}
+          onClose={handleDrawerClose}
+          PaperProps={{
+            sx: {
+              width: 280,
+              bgcolor: '#120F0D',
+              color: '#FDF5E6',
+              borderLeft: '1px solid rgba(211, 47, 47, 0.18)',
+            }
+          }}
+        >
+          <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ height: 44, width: 44, borderRadius: '50%', overflow: 'hidden', bgcolor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #D32F2F' }}>
+                <img src={logo} alt="Mug Shot Logo" style={{ height: '85%', width: '85%', objectFit: 'contain' }} />
+              </Box>
+              <Typography sx={{ fontWeight: 900, letterSpacing: 2 }}>
+                Mug Shot
+              </Typography>
+            </Box>
+
+            <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
+
+            <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              {navItems.map((item) => (
+                <ListItemButton
+                  key={item.label}
+                  component={RouterLink}
+                  to={item.path}
+                  onClick={handleDrawerClose}
+                  selected={location.pathname === item.path}
+                  sx={{
+                    borderRadius: 2,
+                    color: location.pathname === item.path ? 'primary.main' : 'text.secondary',
+                    '&.Mui-selected': {
+                      bgcolor: 'rgba(211, 47, 47, 0.12)',
+                    },
+                    '&.Mui-selected:hover': {
+                      bgcolor: 'rgba(211, 47, 47, 0.16)',
+                    },
+                    '&:hover': {
+                      bgcolor: 'rgba(255, 255, 255, 0.04)',
+                    }
+                  }}
+                >
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{ fontWeight: 800, letterSpacing: 1 }}
+                  />
+                </ListItemButton>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
       </AppBar>
     </ElevationScroll>
   );
