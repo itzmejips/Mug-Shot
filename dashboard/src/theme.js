@@ -5,61 +5,61 @@ const theme = createTheme({
     mode: 'dark',
     primary: {
       main: '#D32F2F', // Deep Crimson
-      light: '#E57373', // Muted Coral
-      dark: '#B71C1C', // Rich Garnet
+      light: '#D32F2F',
+      dark: '#D32F2F',
       contrastText: '#FFFFFF',
     },
     secondary: {
       main: '#F5F5DC', // Beige / Cream
     },
     background: {
-      default: '#120F0D', // Rich Espresso Black
+      default: '#120F0D', // Espresso Black
       paper: '#1C1816', // Roasted Bean
     },
     text: {
-      primary: '#FDF5E6', // Old Lace / Warm Cream
-      secondary: '#A09088', // Warm Mocha Gray
+      primary: '#FDF5E6', // Warm Cream
+      secondary: '#A09088', // Mocha Gray
     },
     divider: 'rgba(211, 47, 47, 0.15)',
   },
   typography: {
-    fontFamily: '"Outfit", "Inter", "system-ui", sans-serif',
+    fontFamily: '"Gotham", "Outfit"',
     h1: {
-      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 900,
       letterSpacing: '-1px',
       lineHeight: 1.1,
     },
     h2: {
-      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 800,
       letterSpacing: '0px',
       lineHeight: 1.2,
     },
     h3: {
-      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 700,
       letterSpacing: '0px',
     },
     h4: {
-      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 700,
     },
     h5: {
-      fontFamily: '"Gotham", "Avenir Next", "Segoe UI", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 600,
     },
     h6: {
-      fontFamily: '"Outfit", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 600,
     },
     subtitle1: {
-      fontFamily: '"Outfit", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 500,
       letterSpacing: '0px',
     },
     button: {
-      fontFamily: '"Outfit", sans-serif',
+      fontFamily: '"Gotham", "Outfit"',
       fontWeight: 700,
       letterSpacing: '1px',
       textTransform: 'none',
@@ -82,10 +82,10 @@ const theme = createTheme({
           },
         },
         containedPrimary: {
-          background: 'linear-gradient(135deg, #D32F2F 0%, #E57373 100%)',
+          backgroundColor: '#D32F2F',
           boxShadow: '0 4px 15px rgba(211, 47, 47, 0.3)',
           '&:hover': {
-            background: 'linear-gradient(135deg, #E57373 0%, #D32F2F 100%)',
+            backgroundColor: '#D32F2F',
           }
         },
         outlinedPrimary: {

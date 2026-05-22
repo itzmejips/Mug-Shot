@@ -109,7 +109,7 @@ const MenuManager = () => {
 
       // revoke previous object URL if it was created for a file
       if (formData.photo && formData.photoUrl) {
-        try { URL.revokeObjectURL(formData.photoUrl); } catch (err) { /* ignore */ }
+        try { URL.revokeObjectURL(formData.photoUrl); } catch { /* ignore */ }
       }
       const preview = URL.createObjectURL(file);
       setFormData({ ...formData, photo: file, photoUrl: preview, isPhotoRemoved: false });
@@ -119,7 +119,7 @@ const MenuManager = () => {
   const handleRemovePhoto = () => {
     // revoke object URL if present
     if (formData.photo && formData.photoUrl) {
-      try { URL.revokeObjectURL(formData.photoUrl); } catch (err) { /* ignore */ }
+      try { URL.revokeObjectURL(formData.photoUrl); } catch { /* ignore */ }
     }
     setFormData({ ...formData, photo: null, photoUrl: '', isPhotoRemoved: true });
   };

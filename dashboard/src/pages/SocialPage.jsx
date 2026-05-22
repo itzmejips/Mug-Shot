@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Container, Typography, Stack, Card, Button } from '@mui/material';
 import { Facebook, Phone, Mail } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
